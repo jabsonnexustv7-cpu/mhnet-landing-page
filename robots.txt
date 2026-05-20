@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://webturbo-internet.com.br/sitemap.xml
+Sitemap: https://assine-mhnet.com.br/sitemap.xml
