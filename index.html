@@ -5742,6 +5742,20 @@
       }, 1000);
     }
 
+
+    function dispararConversaoLeadGoogleAds() {
+      if (window.googleAdsLeadConversionSent) return;
+      window.googleAdsLeadConversionSent = true;
+
+      if (typeof gtag === "function") {
+        gtag("event", "conversion", {
+          send_to: "AW-17075496858/zJmpCO2zoM8bEJrPnc4_",
+          value: 1.0,
+          currency: "BRL"
+        });
+      }
+    }
+
     async function enviarFormulario() {
       const erroEl = $("modalErro");
       erroEl.classList.remove("show");
@@ -5776,15 +5790,7 @@
             easy_ok: data.easyOk === true ? "sim" : "nao"
           });
           mostrarEtapa(6);
-          if (data.easyOk === true && typeof gtag === "function") {
-            const planoSelecionado = $("mPlano").value;
-            const valorConversao = PLAN_VALUES[planoSelecionado] || 1.0;
-            gtag("event", "conversion", {
-              send_to: "AW-17075496858/zJmpCO2ZoM8bEJrPnc4_",
-              value: valorConversao,
-              currency: "BRL"
-            });
-          }
+          dispararConversaoLeadGoogleAds();
           hideGlobalLoading();
           redirecionarWhatsAppFinal();
         } else {
