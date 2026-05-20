@@ -3402,13 +3402,13 @@
       };
     }
 
-    function notificarConsultaViavel({ cep, fachada, cidade, uf, motivo, coords, origem }) {
+    async function notificarConsultaViavel({ cep, fachada, cidade, uf, motivo, coords, origem }) {
       const cepLimpo = String(cep || "").replace(/\D+/g, "");
       const origemConsulta = origem || "";
 
       if (cepLimpo.length !== 8) {
         console.warn("Notificação de consulta viável ignorada: CEP inválido.", { cep, origem: origemConsulta });
-        return Promise.resolve(false);
+        return false;
       }
 
       // O frontend sempre notifica consulta viável ao backend.
@@ -3420,27 +3420,54 @@
         : `ic_${cepLimpo}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
       const trackingData = fluxoWhatsapp ? {} : montarDadosRastreamentoMeta(eventId);
 
-      return fetch(CLOUD_RUN_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "notifyConsulta",
-          cep: cepLimpo,
-          fachada: fachada || "-",
-          nomeCidade: cidade || "",
-          uf: uf || "",
-          origemConsulta,
-          skipInitiateCheckout: fluxoWhatsapp,
-          ...trackingData,
-          cobertura: {
-            motivo: motivo || "-",
-            coords: coords || ""
-          }
-        })
-      }).catch((err) => {
+      const payload = {
+        action: "notifyConsulta",
+        cep: cepLimpo,
+        fachada: fachada || "-",
+        nomeCidade: cidade || "",
+        uf: uf || "",
+        origemConsulta,
+        skipInitiateCheckout: fluxoWhatsapp,
+        ...trackingData,
+        cobertura: {
+          motivo: motivo || "-",
+          coords: coords || ""
+        }
+      };
+
+      console.info("[cobertura] Enviando notifyConsulta", {
+        endpoint: CLOUD_RUN_URL,
+        origem: origemConsulta,
+        fluxoWhatsapp,
+        skipInitiateCheckout: payload.skipInitiateCheckout,
+        cep: cepLimpo
+      });
+
+      try {
+        const response = await fetch(CLOUD_RUN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json().catch(() => ({}));
+        console.info("[cobertura] Resposta notifyConsulta", {
+          origem: origemConsulta,
+          status: response.status,
+          okHttp: response.ok,
+          okBody: data && data.ok,
+          motivo: data && (data.motivo || data.message || "")
+        });
+
+        if (!response.ok || (data && data.ok === false)) {
+          console.warn("NotifyConsulta retornou erro", { origem: origemConsulta, status: response.status, data });
+          return false;
+        }
+
+        return true;
+      } catch (err) {
         console.warn("Falha ao enviar notificação de consulta viável:", { origem: origemConsulta, err });
         return false;
-      });
+      }
     }
 
 
@@ -4043,6 +4070,7 @@
             cep
           });
 
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: origemConsulta, cep, cidade, uf, viavel: true });
           notificarConsultaViavel({
             cep,
             fachada,
@@ -4630,6 +4658,7 @@
           setStatus("Cobertura disponível para este endereço.", "ok");
 
           // Notificação silenciosa — consulta viável da dobra principal
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: "box_principal", cep: cepLimpo, cidade, uf, viavel: true });
           notificarConsultaViavel({
             cep: cepLimpo,
             fachada,
@@ -5485,6 +5514,7 @@
             cep
           });
 
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: "modal_contratacao", cep, cidade, uf, viavel: true });
           notificarConsultaViavel({
             cep,
             fachada,
