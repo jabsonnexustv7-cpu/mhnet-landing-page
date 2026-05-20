@@ -1990,15 +1990,34 @@
       .faq-section { padding: 40px 0 48px; }
 
       .floating-wa {
-        right: 12px; bottom: 12px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        min-height: 0;
+        right: 12px;
+        bottom: 12px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        min-height: 48px;
         gap: 8px;
+        width: max-content;
+        max-width: calc(100vw - 32px);
+        white-space: nowrap;
       }
-      .floating-wa-text { font-size: 13px; white-space: normal; max-width: 88px; line-height: 1.1; }
-      .floating-wa-icon { width: 28px; height: 28px; background: transparent; }
-      .floating-wa-icon svg { width: 22px; height: 22px; }
+
+      .floating-wa-text {
+        font-size: 13px;
+        white-space: nowrap;
+        max-width: none;
+        line-height: 1;
+      }
+
+      .floating-wa-icon {
+        width: 28px;
+        height: 28px;
+        background: transparent;
+      }
+
+      .floating-wa-icon svg {
+        width: 22px;
+        height: 22px;
+      }
 
 
       .wt-modal-overlay {
