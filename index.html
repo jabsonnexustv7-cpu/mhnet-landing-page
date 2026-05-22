@@ -3376,6 +3376,24 @@
       }
     }
 
+
+    function dispararLeadGoogleAdsConsultaViavel(params = {}) {
+      try {
+        if (typeof gtag !== "function") return;
+
+        gtag("event", "conversion", {
+          send_to: "AW-17075496858/zJmpCO2ZoM8bEJrPnc4_",
+          value: 1.0,
+          currency: "BRL",
+          event_category: "lead",
+          event_label: "consulta_cobertura_viavel",
+          ...params
+        });
+      } catch (e) {
+        console.warn("Erro ao enviar conversão Google Ads Lead:", e);
+      }
+    }
+
     function origemEhFluxoWhatsapp(origem) {
       const value = String(origem || "").toLowerCase();
 
@@ -4084,6 +4102,13 @@
             cep
           });
 
+          dispararLeadGoogleAdsConsultaViavel({
+            origem_consulta: origemConsulta,
+            cidade,
+            uf,
+            cep
+          });
+
           console.info("[cobertura] Chamando notificarConsultaViavel", { origem: origemConsulta, cep, cidade, uf, viavel: true });
           notificarConsultaViavel({
             cep,
@@ -4646,6 +4671,13 @@
 
         if (res && res.ok === true && res.viavel === true) {
           trackGA4("consulta_cobertura_viavel", {
+            origem_consulta: "box_principal",
+            cidade,
+            uf,
+            cep: cepLimpo
+          });
+
+          dispararLeadGoogleAdsConsultaViavel({
             origem_consulta: "box_principal",
             cidade,
             uf,
@@ -5522,6 +5554,13 @@
 
         if (res && res.ok === true && res.viavel === true) {
           trackGA4("consulta_cobertura_viavel", {
+            origem_consulta: "modal_contratacao",
+            cidade,
+            uf,
+            cep
+          });
+
+          dispararLeadGoogleAdsConsultaViavel({
             origem_consulta: "modal_contratacao",
             cidade,
             uf,
