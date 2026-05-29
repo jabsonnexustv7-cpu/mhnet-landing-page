@@ -2410,6 +2410,42 @@
     const WHATS_NUMBER = "555193187300";
     const TIMEOUT_MS   = 8000;
 
+    const GOOGLE_ADS_ID = "AW-17075496858";
+    const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-17075496858/zJmpCO2zoM8bEJrPnc4_";
+
+    function dispararConversaoPrincipalGoogleAds(params = {}) {
+      try {
+        const origemConversao = params.origem_conversao || "principal";
+        window.googleAdsPrincipalConversionsSent = window.googleAdsPrincipalConversionsSent || {};
+        if (window.googleAdsPrincipalConversionsSent[origemConversao]) return;
+
+        window.googleAdsPrincipalConversionsSent[origemConversao] = true;
+
+        if (typeof gtag !== "function") return;
+
+        const plano = params.plano || "";
+        const valorInformado = params.value !== undefined ? Number(params.value) : undefined;
+        const valorPlano = plano && typeof PLAN_VALUES !== "undefined" && PLAN_VALUES[plano] ? Number(PLAN_VALUES[plano]) : undefined;
+        const valorConversao = Number.isFinite(valorInformado) ? valorInformado : valorPlano;
+        const payload = {
+          send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+          currency: "BRL",
+          origem_conversao: origemConversao,
+          plano,
+          cidade: params.cidade || "",
+          uf: params.uf || "",
+          cep: params.cep || ""
+        };
+
+        if (Number.isFinite(valorConversao)) payload.value = valorConversao;
+
+        gtag("event", "conversion", payload);
+      } catch (e) {
+        console.warn("Erro ao enviar conversão principal Google Ads:", e);
+      }
+    }
+
+
     const $ = (id) => document.getElementById(id);
 
     const formatCep = (value) => {
@@ -2761,6 +2797,15 @@
     $("cep").addEventListener("input", (e) => { e.target.value = formatCep(e.target.value); });
     $("btnConsultar").addEventListener("click", consultarCobertura);
     $("btnLimpar").addEventListener("click", clearForm);
+    $("btnContratarCobertura").addEventListener("click", function() {
+      if (!coberturaPaginaData) return;
+      dispararConversaoPrincipalGoogleAds({
+        origem_conversao: "whatsapp_pos_cobertura_box_principal",
+        cidade: coberturaPaginaData && coberturaPaginaData.cidade ? coberturaPaginaData.cidade : "",
+        uf: coberturaPaginaData && coberturaPaginaData.uf ? coberturaPaginaData.uf : "",
+        cep: coberturaPaginaData && coberturaPaginaData.cep ? onlyDigits(coberturaPaginaData.cep) : ""
+      });
+    });
     $("cep").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); consultarCobertura(); } });
     $("numero").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); consultarCobertura(); } });
     setAddress("");
@@ -3236,7 +3281,17 @@
       const intervalo = setInterval(() => {
         segundos--;
         if (contador) contador.textContent = segundos;
-        if (segundos <= 0) { clearInterval(intervalo); window.location.href = url; }
+        if (segundos <= 0) {
+          clearInterval(intervalo);
+          dispararConversaoPrincipalGoogleAds({
+            origem_conversao: "whatsapp_pos_formulario_site",
+            plano: $("mPlano") ? $("mPlano").value : "",
+            cidade: $("mCidade") ? $("mCidade").value.trim() : "",
+            uf: $("mUf") ? $("mUf").value.trim().toUpperCase() : "",
+            cep: $("mCep") ? onlyDigits($("mCep").value) : ""
+          });
+          window.location.href = url;
+        }
       }, 1000);
     }
 
@@ -3261,15 +3316,6 @@
         const data = await response.json().catch(() => ({}));
         if (response.ok && data.ok) {
           mostrarEtapa(6);
-          if (data.easyOk === true && vendaVeioDoGoogleSite() && typeof gtag === "function") {
-            const planoSelecionado = $("mPlano").value;
-            const valorConversao = PLAN_VALUES[planoSelecionado] || 1.0;
-            gtag("event", "conversion", {
-              send_to: "AW-17075496858/mdbTCLiuxcsaEJrPnc4_",
-              value: valorConversao,
-              currency: "BRL"
-            });
-          }
           redirecionarWhatsAppFinal();
         } else {
           erroEl.textContent = data.message || "Erro ao enviar. Tente novamente.";
