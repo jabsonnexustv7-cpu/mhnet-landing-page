@@ -3354,6 +3354,42 @@
     const WHATS_NUMBER = "555182057207";
     const TIMEOUT_MS   = 8000;
 
+    const GOOGLE_ADS_ID = "AW-17075496858";
+    const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-17075496858/zJmpCO2zoM8bEJrPnc4_";
+
+    function dispararConversaoPrincipalGoogleAds(params = {}) {
+      try {
+        const origemConversao = params.origem_conversao || "principal";
+        window.googleAdsPrincipalConversionsSent = window.googleAdsPrincipalConversionsSent || {};
+        if (window.googleAdsPrincipalConversionsSent[origemConversao]) return;
+
+        window.googleAdsPrincipalConversionsSent[origemConversao] = true;
+
+        if (typeof gtag !== "function") return;
+
+        const plano = params.plano || "";
+        const valorInformado = params.value !== undefined ? Number(params.value) : undefined;
+        const valorPlano = plano && typeof PLAN_VALUES !== "undefined" && PLAN_VALUES[plano] ? Number(PLAN_VALUES[plano]) : undefined;
+        const valorConversao = Number.isFinite(valorInformado) ? valorInformado : valorPlano;
+        const payload = {
+          send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+          currency: "BRL",
+          origem_conversao: origemConversao,
+          plano,
+          cidade: params.cidade || "",
+          uf: params.uf || "",
+          cep: params.cep || ""
+        };
+
+        if (Number.isFinite(valorConversao)) payload.value = valorConversao;
+
+        gtag("event", "conversion", payload);
+      } catch (e) {
+        console.warn("Erro ao enviar conversão principal Google Ads:", e);
+      }
+    }
+
+
     /* ── EVENTOS GOOGLE / GA4 ──
        Funil do site WebTurbo:
        - clicou_consultar_cobertura
@@ -3387,18 +3423,13 @@
 
     function dispararLeadGoogleAdsConsultaViavel(params = {}) {
       try {
-        if (typeof gtag !== "function") return;
-
-        gtag("event", "conversion", {
-          send_to: "AW-17075496858/zJmpCO2ZoM8bEJrPnc4_",
-          value: 1.0,
-          currency: "BRL",
+        trackGA4("lead_consulta_cobertura_viavel_analise", {
           event_category: "lead",
           event_label: "consulta_cobertura_viavel",
           ...params
         });
       } catch (e) {
-        console.warn("Erro ao enviar conversão Google Ads Lead:", e);
+        console.warn("Erro ao enviar evento analítico de consulta viável:", e);
       }
     }
 
@@ -4755,8 +4786,15 @@
     $("btnConsultar").addEventListener("click", consultarCobertura);
     $("btnLimpar").addEventListener("click", clearForm);
     $("btnContratarCobertura").addEventListener("click", function() {
+      if (!coberturaPaginaData) return;
       trackGA4("clique_whatsapp", {
         origem_botao: "box_principal_cobertura_viavel",
+        cidade: coberturaPaginaData && coberturaPaginaData.cidade ? coberturaPaginaData.cidade : "",
+        uf: coberturaPaginaData && coberturaPaginaData.uf ? coberturaPaginaData.uf : "",
+        cep: coberturaPaginaData && coberturaPaginaData.cep ? onlyDigits(coberturaPaginaData.cep) : ""
+      });
+      dispararConversaoPrincipalGoogleAds({
+        origem_conversao: "whatsapp_pos_cobertura_box_principal",
         cidade: coberturaPaginaData && coberturaPaginaData.cidade ? coberturaPaginaData.cidade : "",
         uf: coberturaPaginaData && coberturaPaginaData.uf ? coberturaPaginaData.uf : "",
         cep: coberturaPaginaData && coberturaPaginaData.cep ? onlyDigits(coberturaPaginaData.cep) : ""
@@ -5829,24 +5867,18 @@
             cidade: $("mCidade") ? $("mCidade").value.trim() : "",
             uf: $("mUf") ? $("mUf").value.trim().toUpperCase() : ""
           });
+          dispararConversaoPrincipalGoogleAds({
+            origem_conversao: "whatsapp_pos_formulario_site",
+            plano: $("mPlano") ? $("mPlano").value : "",
+            cidade: $("mCidade") ? $("mCidade").value.trim() : "",
+            uf: $("mUf") ? $("mUf").value.trim().toUpperCase() : "",
+            cep: $("mCep") ? onlyDigits($("mCep").value) : ""
+          });
           window.location.href = url;
         }
       }, 1000);
     }
 
-
-    function dispararConversaoLeadGoogleAds() {
-      if (window.googleAdsLeadConversionSent) return;
-      window.googleAdsLeadConversionSent = true;
-
-      if (typeof gtag === "function") {
-        gtag("event", "conversion", {
-          send_to: "AW-17075496858/zJmpCO2zoM8bEJrPnc4_",
-          value: 1.0,
-          currency: "BRL"
-        });
-      }
-    }
 
     async function enviarFormulario() {
       const erroEl = $("modalErro");
@@ -5882,7 +5914,6 @@
             easy_ok: data.easyOk === true ? "sim" : "nao"
           });
           mostrarEtapa(6);
-          dispararConversaoLeadGoogleAds();
           hideGlobalLoading();
           redirecionarWhatsAppFinal();
         } else {
