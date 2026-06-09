@@ -47,6 +47,7 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'AW-17075496858');
+    gtag('config', 'AW-18209661462');
     gtag('config', 'G-FQ4D45L8CS');
   </script>
 
@@ -3385,6 +3386,13 @@
     }
 
 
+    function trackGoogleAdsWhatsAppConversion() {
+      if (typeof gtag !== "function") return;
+      gtag('event', 'conversion', {
+        'send_to': 'AW-18209661462/fkbCN-lhrkcEJbEhetD'
+      });
+    }
+
     function dispararLeadGoogleAdsConsultaViavel(params = {}) {
       try {
         if (typeof gtag !== "function") return;
@@ -4160,6 +4168,7 @@
           });
 
           btnWhats?.addEventListener("click", function() {
+            trackGoogleAdsWhatsAppConversion();
             trackGA4("clique_whatsapp", {
               origem_botao: origemConsulta + "_cobertura_viavel",
               cidade,
@@ -4755,6 +4764,7 @@
     $("btnConsultar").addEventListener("click", consultarCobertura);
     $("btnLimpar").addEventListener("click", clearForm);
     $("btnContratarCobertura").addEventListener("click", function() {
+      trackGoogleAdsWhatsAppConversion();
       trackGA4("clique_whatsapp", {
         origem_botao: "box_principal_cobertura_viavel",
         cidade: coberturaPaginaData && coberturaPaginaData.cidade ? coberturaPaginaData.cidade : "",
@@ -5823,6 +5833,7 @@
         if (contador) contador.textContent = segundos;
         if (segundos <= 0) {
           clearInterval(intervalo);
+          trackGoogleAdsWhatsAppConversion();
           trackGA4("clique_whatsapp", {
             origem_botao: "pos_envio_formulario_easy",
             plano: $("mPlano") ? $("mPlano").value : "",
@@ -6597,6 +6608,7 @@
 
         document.getElementById("wt-s2-close")?.addEventListener("click", () => esconderToastAbandono(true));
         document.getElementById("wt-s2-wa")?.addEventListener("click", function() {
+          trackGoogleAdsWhatsAppConversion();
           safeTrack("toast_abandono_clicou_whatsapp");
           esconderToastAbandono(false);
         });
