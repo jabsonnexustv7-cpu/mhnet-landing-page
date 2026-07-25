@@ -4794,6 +4794,10 @@
     let modalCoverageData = null;
     let coberturaPaginaData = null;
     let modalSemCepMode = false;
+    const LEAD_DADOS_PESSOAIS_ENDPOINT = "https://webturbo-lead-zapier-964927461432.southamerica-east1.run.app";
+    let leadDadosPessoaisEventId = null;
+    let leadDadosPessoaisEnviado = false;
+    let leadDadosPessoaisEmEnvio = false;
 
     const PLAN_LABELS = {
       "FIBRA 500MB": "FIBRA 500MB — R$ 99,90/mês",
@@ -5651,6 +5655,59 @@
       setTimeout(() => $("mNome").focus(), 120);
     }
 
+    async function enviarLeadDadosPessoais() {
+      if (leadDadosPessoaisEnviado || leadDadosPessoaisEmEnvio) return;
+
+      if (!leadDadosPessoaisEventId) {
+        leadDadosPessoaisEventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      }
+
+      const nomeCompleto = $("mNome").value.trim();
+      const partesNome = nomeCompleto.split(/\s+/);
+      const primeiroNome = partesNome[0] || "";
+      const sobrenome = partesNome.slice(1).join(" ");
+
+      const payload = {
+        event_id: leadDadosPessoaisEventId,
+        user_id: leadDadosPessoaisEventId,
+        event_name: "Lead",
+        phone: onlyDigits($("mTelefone1").value),
+        email: $("mEmail").value.trim().toLowerCase(),
+        first_name: primeiroNome,
+        last_name: sobrenome,
+        city: $("mCidade").value.trim(),
+        state: $("mUf").value.trim().toUpperCase(),
+        country: "BR",
+        currency: "BRL",
+        value: 0,
+        lead_stage: "dados_pessoais_enviados",
+        source: "site_webturbo"
+      };
+
+      leadDadosPessoaisEmEnvio = true;
+
+      try {
+        const response = await fetch(LEAD_DADOS_PESSOAIS_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`http_${response.status}`);
+        }
+
+        leadDadosPessoaisEnviado = true;
+        console.info("Evento de Lead enviado com sucesso.", {
+          status_http: response.status
+        });
+      } finally {
+        leadDadosPessoaisEmEnvio = false;
+      }
+    }
+
     function validarEtapaDados() {
       let hasError = false;
       ["mNome","mCpf","mNascimento","mEmail","mTelefone1","mTelefone2"].forEach(fieldReset);
@@ -5673,6 +5730,13 @@
         if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
+
+      enviarLeadDadosPessoais().catch((erro) => {
+        console.warn("Não foi possível enviar o evento de Lead.", {
+          mensagem: erro && erro.message ? erro.message : "erro_desconhecido"
+        });
+      });
+
       mostrarEtapa(4);
     }
 
