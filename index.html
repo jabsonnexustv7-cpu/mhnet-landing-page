@@ -4208,8 +4208,20 @@
     }
 
     document.addEventListener("DOMContentLoaded", function() {
-      wtId("botaoWhats")?.addEventListener("click", () => wtAbrirModal("botao_floating_whatsapp_site"));
-      wtId("botaoWhatsTopo")?.addEventListener("click", () => wtAbrirModal("botao_topo_whatsapp_site"));
+      wtId("botaoWhats")?.addEventListener("click", function() {
+        trackGoogleAdsWhatsAppConversion();
+        trackGA4("clique_whatsapp", {
+          origem_botao: "botao_floating_whatsapp_site"
+        });
+        window.location.href = `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent("Olá! Quero falar sobre os planos de internet MhNet com a WebTurbo.")}`;
+      });
+      wtId("botaoWhatsTopo")?.addEventListener("click", function() {
+        trackGoogleAdsWhatsAppConversion();
+        trackGA4("clique_whatsapp", {
+          origem_botao: "botao_topo_whatsapp_site"
+        });
+        window.location.href = `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent("Olá! Quero falar sobre os planos de internet MhNet com a WebTurbo.")}`;
+      });
       wtId("fecharModalWhats")?.addEventListener("click", wtFecharModal);
       wtId("modalConsultaWhats")?.addEventListener("click", function(e) {
         if (e.target && e.target.id === "modalConsultaWhats") wtFecharModal();
