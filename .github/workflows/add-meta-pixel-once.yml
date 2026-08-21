@@ -1,0 +1,75 @@
+name: Adicionar Meta Pixel uma vez
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/add-meta-pixel-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  add-meta-pixel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inserir Meta Pixel no index
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          pixel_id = '907334254744897'
+
+          if pixel_id in text and "fbq('track', 'PageView')" in text:
+              print('Meta Pixel já está instalado; nenhuma alteração necessária.')
+              raise SystemExit(0)
+
+          marker = "  </script>\n\n  <!-- Leaflet.js - mapa interativo OpenStreetMap -->"
+          if marker not in text:
+              raise SystemExit('Ponto de inserção do Pixel não encontrado no index.html')
+
+          pixel = '''  </script>
+
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '907334254744897');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=907334254744897&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
+
+  <!-- Leaflet.js - mapa interativo OpenStreetMap -->'''
+
+          text = text.replace(marker, pixel, 1)
+          path.write_text(text, encoding='utf-8')
+          print('Meta Pixel inserido com PageView no index.html.')
+          PY
+
+      - name: Commit da alteração
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "Nenhuma alteração para commitar."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Adiciona Meta Pixel e PageView à landing page"
+          git push
