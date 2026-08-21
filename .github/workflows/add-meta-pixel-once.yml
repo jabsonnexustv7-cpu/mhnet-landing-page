@@ -73,3 +73,5 @@ jobs:
           git add index.html
           git commit -m "Adiciona Meta Pixel e PageView à landing page"
           git push
+
+# trigger: 2026-08-21
