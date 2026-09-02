@@ -2495,7 +2495,7 @@
               <li>Ótimo custo-benefício</li>
               <li>Ideal para uso residencial</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -2516,7 +2516,7 @@
               <li>Wi-Fi incluso</li>
               <li>Ideal para streaming</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB + GLOBOPLAY')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500_GLOBOPLAY')">Contratar agora</button>
           </article>
 
           <article class="plan featured">
@@ -2537,7 +2537,7 @@
               <li>Mais cobertura na casa</li>
               <li>Ideal para múltiplos dispositivos</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500_WIFI_EXTRA')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -2558,7 +2558,7 @@
               <li>Globoplay incluso</li>
               <li>Casa conectada e entretenimento</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_600_WIFI_EXTRA_GLOBOPLAY')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -2579,7 +2579,7 @@
               <li>Mais alcance dentro da casa</li>
               <li>Ideal para alta demanda</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 700MB + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_700_WIFI_EXTRA')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -2600,7 +2600,7 @@
               <li>Máxima performance no dia a dia</li>
               <li>Para alta demanda</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_1000_WIFI_EXTRA')">Contratar agora</button>
           </article>
           </div>
         </div>
@@ -3060,12 +3060,12 @@
               <label for="mPlano">Plano desejado *</label>
               <select id="mPlano">
                 <option value="">Selecione o plano...</option>
-                <option value="FIBRA 500MB">FIBRA 500MB — R$ 99,90/mês</option>
-                <option value="FIBRA 500MB + GLOBOPLAY">FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês</option>
-                <option value="FIBRA 500MB + 1 PONTO EXTRA DE WI-FI">FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês</option>
-                <option value="FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY">FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês</option>
-                <option value="FIBRA 700MB + 1 PONTO EXTRA DE WI-FI">FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês</option>
-                <option value="FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI">FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês</option>
+                <option value="MHNET_500">FIBRA 500MB — R$ 99,90/mês</option>
+                <option value="MHNET_500_GLOBOPLAY">FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês</option>
+                <option value="MHNET_500_WIFI_EXTRA">FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês</option>
+                <option value="MHNET_600_WIFI_EXTRA_GLOBOPLAY">FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês</option>
+                <option value="MHNET_700_WIFI_EXTRA">FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês</option>
+                <option value="MHNET_1000_WIFI_EXTRA">FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês</option>
               </select>
               <span class="mfield-error-msg" id="err-mPlano">Selecione o plano desejado.</span>
             </div>
@@ -3349,11 +3349,13 @@
 
   <script>
     /* ── CONFIGURAÇÕES ── */
-    const ENDPOINT     = "https://consulta-cobertura-mhnet-br-964927461432.southamerica-east1.run.app";
+    const ENDPOINT     = "https://webturbo-crm-api-964927461432.southamerica-east1.run.app/api/v1/public/site-coverage/resolve";
+    const MHNET_LEGACY_ENDPOINT = "https://consulta-cobertura-mhnet-br-964927461432.southamerica-east1.run.app";
+    const SITE_PRE_SALE_ENDPOINT = "https://webturbo-crm-api-964927461432.southamerica-east1.run.app/api/v1/public/site-pre-sales";
     const CLOUD_RUN_URL = "https://modal-easy-964927461432.southamerica-east1.run.app";
     const FIXED_RADIUS = 200;
     const WHATS_NUMBER = "555193187300";
-    const TIMEOUT_MS   = 8000;
+    const TIMEOUT_MS   = 18000;
 
     /* ── EVENTOS GOOGLE / GA4 ──
        Funil do site WebTurbo:
@@ -4418,107 +4420,170 @@
       } catch { return null; }
     }
 
+    const COVERAGE_SESSION_KEY = "webturbo_site_coverage_v1";
+
+    function normalizarPayloadCoberturaSite(payload) {
+      return {
+        postalCode: onlyDigits(payload && payload.cep),
+        state: String(payload && payload.uf || "").trim().toUpperCase(),
+        city: String(payload && payload.cidade || "").trim(),
+        district: String(payload && payload.bairro || "").trim(),
+        street: String(payload && payload.logradouro || "").trim(),
+        number: String(payload && payload.numero || "").trim(),
+        complement: String(payload && payload.complemento || "").trim()
+      };
+    }
+
+    function chaveEnderecoCobertura(address) {
+      return [address.postalCode, address.state, address.city, address.district, address.street, address.number, address.complement]
+        .map(value => String(value || "").trim().toUpperCase())
+        .join("|");
+    }
+
+    function lerCoberturaDaSessao(key) {
+      try {
+        const cached = JSON.parse(sessionStorage.getItem(COVERAGE_SESSION_KEY) || "null");
+        return cached && cached.addressKey === key ? cached.result : null;
+      } catch { return null; }
+    }
+
+    function salvarCoberturaNaSessao(key, result) {
+      try {
+        sessionStorage.setItem(COVERAGE_SESSION_KEY, JSON.stringify({
+          addressKey: key,
+          operatorCode: result && result.operator ? result.operator.code : null,
+          state: result && result.normalizedAddress ? result.normalizedAddress.state : "",
+          normalizedAddress: result ? result.normalizedAddress : null,
+          coverage: result ? result.coverage : null,
+          selectedPlan: document.getElementById("mPlano")?.value || "",
+          result
+        }));
+      } catch {}
+    }
+
+    function adaptarResolucaoCobertura(data) {
+      return {
+        ...data,
+        viavel: data && data.viable === true,
+        motivo: data && data.coverage ? data.coverage.reason || "" : "",
+        coords: data && data.coverage ? data.coverage.coords || "" : ""
+      };
+    }
+
+    function escapeCoberturaHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatarPrecoPlano(value) {
+      return Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function aplicarPlanosDaCobertura(resolution) {
+      if (!resolution || resolution.viavel !== true || !resolution.operator || !Array.isArray(resolution.plans)) return;
+      const operatorName = resolution.operator.name || resolution.operator.code;
+      const title = document.getElementById("titulo-planos");
+      if (title) title.textContent = `Planos ${operatorName} Internet`;
+
+      const track = document.getElementById("plansTrack");
+      if (track) {
+        track.innerHTML = resolution.plans.map((plan, index) => `
+          <article class="plan${index === 0 ? " featured" : ""}">
+            <div class="plan-badge">${index === 0 ? "⭐ Oferta em destaque" : "Internet fibra"}</div>
+            <h3>${escapeCoberturaHtml(plan.name)}</h3>
+            <div class="subtitle">${escapeCoberturaHtml(plan.description)}</div>
+            <div class="price"><span class="value">R$ ${formatarPrecoPlano(plan.price)}</span><small>/mês</small></div>
+            <div class="plan-info"><span class="plan-tag">Instalação grátis</span><span class="plan-tag">Wi-Fi incluso</span></div>
+            <ul><li>Internet fibra óptica ${escapeCoberturaHtml(operatorName)}</li><li>Oferta disponível no endereço consultado</li></ul>
+            <button class="btn-contratar-plano" onclick="abrirModal('${escapeCoberturaHtml(plan.code)}')">Contratar agora</button>
+          </article>`).join("");
+      }
+
+      const select = document.getElementById("mPlano");
+      if (select) {
+        const previous = select.value;
+        select.innerHTML = '<option value="">Selecione o plano...</option>' + resolution.plans.map(plan =>
+          `<option value="${escapeCoberturaHtml(plan.code)}">${escapeCoberturaHtml(plan.name)} — R$ ${formatarPrecoPlano(plan.price)}/mês</option>`
+        ).join("");
+        select.value = resolution.plans.some(plan => plan.code === previous) ? previous : "";
+      }
+
+      resolution.plans.forEach(plan => {
+        PLAN_LABELS[plan.code] = `${plan.name} — R$ ${formatarPrecoPlano(plan.price)}/mês`;
+        PLAN_VALUES[plan.code] = Number(plan.price || 0);
+      });
+    }
+
+    async function consultarCoberturaSemCepMhnet(payload) {
+      const response = await wtFetchTimeout(MHNET_LEGACY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }, TIMEOUT_MS);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || data.motivo || "Erro ao consultar cobertura.");
+      if (data && data.ok === true && data.viavel === true) {
+        const resolution = adaptarResolucaoCobertura({
+          ok: true,
+          viable: true,
+          operator: { code: "MHNET", name: "MhNet" },
+          normalizedAddress: normalizarPayloadCoberturaSite(payload),
+          coverage: { status: "VIAVEL", reason: data.motivo || "", coords: data.coords || "" },
+          plans: Object.keys(PLAN_LABELS).filter(code => code.startsWith("MHNET_")).map(code => ({
+            code,
+            name: String(PLAN_LABELS[code] || code).split(" — ")[0],
+            price: PLAN_VALUES[code] || 0,
+            description: "Plano MhNet disponível conforme viabilidade técnica."
+          }))
+        });
+        aplicarPlanosDaCobertura(resolution);
+        return resolution;
+      }
+      return { ...data, viable: false, operator: null, plans: [] };
+    }
+
     async function consultarCoberturaCloudRun(payload) {
+      const address = normalizarPayloadCoberturaSite(payload);
+      if (address.postalCode.length !== 8) return consultarCoberturaSemCepMhnet(payload);
+      const addressKey = chaveEnderecoCobertura(address);
+      const cached = lerCoberturaDaSessao(addressKey);
+      if (cached) {
+        const adaptedCached = adaptarResolucaoCobertura(cached);
+        aplicarPlanosDaCobertura(adaptedCached);
+        return adaptedCached;
+      }
+
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
       try {
         const response = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(address),
           signal: controller.signal
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.message || data.motivo || "Erro ao consultar cobertura.");
-        return data;
+        salvarCoberturaNaSessao(addressKey, data);
+        const adapted = adaptarResolucaoCobertura(data);
+        aplicarPlanosDaCobertura(adapted);
+        return adapted;
       } catch (error) {
         if (error.name === "AbortError") throw new Error("Consulta demorou mais que o esperado. Tente novamente.");
         throw error;
       } finally { clearTimeout(timer); }
     }
-    function montarPayloadCoberturaFallback(payload) {
-      if (!payload || payload.semCep === true || payload.sem_cep === true) return null;
-
-      const cep = String(payload.cep || "").replace(/\D/g, "");
-      const logradouro = String(payload.logradouro || "").trim();
-      const numero = String(payload.numero || "").trim();
-      const radius = Number(payload.radius || FIXED_RADIUS || 200);
-
-      if (!cep || cep.length !== 8 || !logradouro || !numero) return null;
-
-      const fachadaSimples = `${logradouro} ${numero}`.trim();
-      const fachadaAtual = String(payload.fachada || "").trim();
-      if (!fachadaSimples) return null;
-
-      /*
-        Fallback propositalmente mínimo.
-        O Cloud Run respondeu viável quando testado manualmente com apenas:
-        { cep, fachada: "Rua Lima e Silva 80", radius: 200 }.
-        Então a segunda tentativa não deve reenviar bairro/cidade/UF/complemento,
-        pois esses campos podem fazer o backend geocodificar outro ponto.
-      */
-      return {
-        cep,
-        fachada: fachadaSimples,
-        radius,
-        fachada_original_site: fachadaAtual,
-        tentativa_frontend: "fallback_minimo_cep_fachada"
-      };
-    }
-
-    function deveTentarFallbackCobertura(data) {
-      if (!data || data.viavel === true) return false;
-      const motivo = String(data.motivo || data.reason || "").toLowerCase();
-      return motivo === "sem_ftth_no_raio" || motivo.includes("sem_ftth_no_raio");
-    }
 
     async function consultarCoberturaCloudRunComFallback(payload) {
-      const primeiraResposta = await consultarCoberturaCloudRun(payload);
-
-      if (!deveTentarFallbackCobertura(primeiraResposta)) {
-        return primeiraResposta;
-      }
-
-      const payloadFallback = montarPayloadCoberturaFallback(payload);
-      if (!payloadFallback) return primeiraResposta;
-
-      try {
-        const segundaResposta = await consultarCoberturaCloudRun(payloadFallback);
-        return (segundaResposta && segundaResposta.ok === true && segundaResposta.viavel === true)
-          ? segundaResposta
-          : primeiraResposta;
-      } catch (error) {
-        return primeiraResposta;
-      }
+      return consultarCoberturaCloudRun(payload);
     }
 
     async function wtConsultarCoberturaEndpointComFallback(payload) {
-      const executarConsulta = async (body) => {
-        const r = await wtFetchTimeout(ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-        }, 18000);
-        return await r.json().catch(() => ({}));
-      };
-
-      const primeiraResposta = await executarConsulta(payload);
-
-      if (!deveTentarFallbackCobertura(primeiraResposta)) {
-        return primeiraResposta;
-      }
-
-      const payloadFallback = montarPayloadCoberturaFallback(payload);
-      if (!payloadFallback) return primeiraResposta;
-
-      try {
-        const segundaResposta = await executarConsulta(payloadFallback);
-        return (segundaResposta && segundaResposta.ok === true && segundaResposta.viavel === true)
-          ? segundaResposta
-          : primeiraResposta;
-      } catch (error) {
-        return primeiraResposta;
-      }
+      return consultarCoberturaCloudRun(payload);
     }
 
 
@@ -4800,22 +4865,35 @@
     let leadDadosPessoaisEmEnvio = false;
 
     const PLAN_LABELS = {
-      "FIBRA 500MB": "FIBRA 500MB — R$ 99,90/mês",
-      "FIBRA 500MB + GLOBOPLAY": "FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês",
-      "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI": "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês",
-      "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY": "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês",
-      "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI": "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês",
-      "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI": "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês"
+      "MHNET_500": "FIBRA 500MB — R$ 99,90/mês",
+      "MHNET_500_GLOBOPLAY": "FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês",
+      "MHNET_500_WIFI_EXTRA": "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês",
+      "MHNET_600_WIFI_EXTRA_GLOBOPLAY": "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês",
+      "MHNET_700_WIFI_EXTRA": "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês",
+      "MHNET_1000_WIFI_EXTRA": "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês"
     };
 
     const PLAN_VALUES = {
-      "FIBRA 500MB": 99.90,
-      "FIBRA 500MB + GLOBOPLAY": 114.80,
-      "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI": 119.90,
-      "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY": 139.90,
-      "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI": 149.90,
-      "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI": 159.90
+      "MHNET_500": 99.90,
+      "MHNET_500_GLOBOPLAY": 114.80,
+      "MHNET_500_WIFI_EXTRA": 119.90,
+      "MHNET_600_WIFI_EXTRA_GLOBOPLAY": 139.90,
+      "MHNET_700_WIFI_EXTRA": 149.90,
+      "MHNET_1000_WIFI_EXTRA": 159.90
     };
+
+    function salvarPlanoSelecionadoSessao(planCode) {
+      try {
+        const cached = JSON.parse(sessionStorage.getItem(COVERAGE_SESSION_KEY) || "null");
+        if (!cached) return;
+        cached.selectedPlan = String(planCode || "");
+        sessionStorage.setItem(COVERAGE_SESSION_KEY, JSON.stringify(cached));
+      } catch {}
+    }
+
+    if ($("mPlano")) {
+      $("mPlano").addEventListener("change", event => salvarPlanoSelecionadoSessao(event.target.value));
+    }
 
     function isValidCpf(cpf) {
       const d = onlyDigits(cpf);
@@ -5870,7 +5948,9 @@
         coordenadas:             $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "",
         coords:                  $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "",
         enderecoLocalizacaoFixa: $("mEnderecoDetectadoLocalizacao") ? $("mEnderecoDetectadoLocalizacao").value.trim() : "",
-        planos:                  $("mPlano").value,
+        operatorCode:            modalCoverageData && modalCoverageData.operator ? modalCoverageData.operator.code : "",
+        planCode:                $("mPlano").value,
+        planos:                  PLAN_LABELS[$("mPlano").value] ? PLAN_LABELS[$("mPlano").value].split(" — ")[0] : $("mPlano").value,
         diaVencimentoFatura:     $("mVencimento").value,
         dataInstalacao1:         $("mDataInstalacao").value,
         turnoInstalacao1:        $("mTurnoInstalacao").value,
@@ -5953,7 +6033,7 @@
       btn.disabled = true;
       showGlobalLoading("Estamos enviando sua solicitação. Aguarde a confirmação na tela antes de sair.", "Finalizando sua solicitação...");
       try {
-        const response = await fetch(CLOUD_RUN_URL, {
+        const response = await fetch(SITE_PRE_SALE_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(buildModalPayload())
