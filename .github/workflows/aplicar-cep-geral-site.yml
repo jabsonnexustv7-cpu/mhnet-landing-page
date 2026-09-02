@@ -35,3 +35,5 @@ jobs:
           git add -- '**/index.html' index.html
           git commit -m "fix: tratar CEP geral TIM no site [skip ci]"
           git push
+
+# Alteração intencional para disparar o workflow após sua criação.
