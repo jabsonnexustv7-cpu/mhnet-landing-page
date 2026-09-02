@@ -13,6 +13,11 @@ function walk(dir) {
   });
 }
 
+function occurrences(text, needle) {
+  if (!needle) return 0;
+  return text.split(needle).length - 1;
+}
+
 function replaceOnce(html, before, after, label, file) {
   if (!html.includes(before)) {
     throw new Error(`${label}: bloco não encontrado em ${path.relative(root, file)}`);
@@ -37,6 +42,21 @@ function patchFile(file) {
     }
 
     function escapeCoberturaHtml(value) {`;
+
+  const mainBefore = `        const res = await consultarCoberturaCloudRunComFallback(payload);
+
+        if (res && res.ok === true && res.viavel === true) {`;
+
+  const whatsBefore = `        const data = await wtConsultarCoberturaEndpointComFallback(payload);
+        const coords = data && data.coords ? data.coords : "";
+
+        if (wtIsViavel(data)) {`;
+
+  // O repositório mantém páginas legadas além do layout atual. Só alteramos
+  // páginas que possuem exatamente os três fluxos do index principal atual.
+  if (!html.includes(helperBefore) || occurrences(html, mainBefore) < 2 || !html.includes(whatsBefore)) {
+    return false;
+  }
 
   const helperAfter = `    function adaptarResolucaoCobertura(data) {
       return {
@@ -105,9 +125,6 @@ function patchFile(file) {
 
   html = replaceOnce(html, helperBefore, helperAfter, "helpers CEP geral", file);
 
-  const mainBefore = `        const res = await consultarCoberturaCloudRunComFallback(payload);
-
-        if (res && res.ok === true && res.viavel === true) {`;
   const mainAfter = `        const res = await consultarCoberturaCloudRunComFallback(payload);
         const pendenciaTim = aplicarSugestaoPendenciaCobertura(res, "consultaLogradouro", "consultaCidade");
 
@@ -128,9 +145,6 @@ function patchFile(file) {
         if (res && res.ok === true && res.viavel === true) {`;
   html = replaceOnce(html, mainBefore, mainAfter, "consulta principal", file);
 
-  const modalBefore = `        const res = await consultarCoberturaCloudRunComFallback(payload);
-
-        if (res && res.ok === true && res.viavel === true) {`;
   const modalAfter = `        const res = await consultarCoberturaCloudRunComFallback(payload);
         const pendenciaTim = aplicarSugestaoPendenciaCobertura(res, "mLogradouro", "mCidade");
 
@@ -154,12 +168,8 @@ function patchFile(file) {
         }
 
         if (res && res.ok === true && res.viavel === true) {`;
-  html = replaceOnce(html, modalBefore, modalAfter, "modal de contratação", file);
+  html = replaceOnce(html, mainBefore, modalAfter, "modal de contratação", file);
 
-  const whatsBefore = `        const data = await wtConsultarCoberturaEndpointComFallback(payload);
-        const coords = data && data.coords ? data.coords : "";
-
-        if (wtIsViavel(data)) {`;
   const whatsAfter = `        const data = await wtConsultarCoberturaEndpointComFallback(payload);
         const coords = data && data.coords ? data.coords : "";
         const pendenciaTim = aplicarSugestaoPendenciaCobertura(data, "wtLogradouroWhats", "wtCidadeWhats");
