@@ -92,11 +92,11 @@ function patchFile(file) {
     function mensagemPendenciaCobertura(pending) {
       if (!pending) return "";
       if (pending.candidate) {
-        return `Encontramos o logradouro \"${pending.candidate.street}\". Confira o nome preenchido e clique novamente em Consultar cobertura para confirmar.`;
+        return "Encontramos o logradouro \\\"" + pending.candidate.street + "\\\". Confira o nome preenchido e clique novamente em Consultar cobertura para confirmar.";
       }
       if (pending.options.length > 1) {
         const nomes = pending.options.slice(0, 5).map((option) => option.street).join("; ");
-        return `A TIM encontrou mais de um logradouro compatível: ${nomes}. Informe o nome completo da rua ou avenida e consulte novamente.`;
+        return "A TIM encontrou mais de um logradouro compatível: " + nomes + ". Informe o nome completo da rua ou avenida e consulte novamente.";
       }
       return "Não conseguimos identificar o logradouro com segurança. Informe o nome completo da rua ou avenida e consulte novamente.";
     }
@@ -172,7 +172,7 @@ function patchFile(file) {
             cep,
             motivo: data && data.motivo ? data.motivo : pendenciaTim.reason || "logradouro_pendente"
           });
-          wtSetStatus(`<strong>Precisamos confirmar o logradouro.</strong><br>${escapeCoberturaHtml(mensagemPendenciaCobertura(pendenciaTim))}`);
+          wtSetStatus("<strong>Precisamos confirmar o logradouro.</strong><br>" + escapeCoberturaHtml(mensagemPendenciaCobertura(pendenciaTim)));
           wtId("wtLogradouroWhats")?.focus();
           return;
         }
