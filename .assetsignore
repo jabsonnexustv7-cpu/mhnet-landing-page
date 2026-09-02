@@ -1,0 +1,9 @@
+.git/
+.github/
+.wrangler/
+tests/
+.gitignore
+.assetsignore
+wrangler.jsonc
+README.md
+relatorio-geracao.json
