@@ -8,7 +8,7 @@
   <meta name="description" content="Consulte cobertura MhNet em Piratuba - SC com a WebTurbo, agente autorizado. Veja planos de internet fibra e contrate online." />
   <meta name="keywords" content="MhNet, parceiro autorizado MhNet, parceiro de vendas MhNet, internet fibra, internet fibra óptica, consultar cobertura, planos de internet, internet residencial, internet RS, internet SC, internet PR, internet SP, internet MS" />
   <meta name="robots" content="index, follow" />
-  <meta name="author" content="WebTurbo Internet" />
+  <meta name="author" content="MhNet Internet Fibra" />
   <meta name="theme-color" content="#0a2463" />
 
   <link rel="icon" type="image/png" href="/favicon.png" />
@@ -19,18 +19,18 @@
   <meta property="og:title" content="Internet MhNet em Piratuba | WebTurbo" />
   <meta property="og:description" content="Consulte cobertura MhNet em Piratuba - SC com a WebTurbo, agente autorizado. Veja planos de internet fibra e contrate online." />
   <meta property="og:url" content="https://webturbo-internet.com.br/internet-mhnet-piratuba/" />
-  <meta property="og:site_name" content="WebTurbo Internet" />
-  <meta property="og:image" content="https://webturbo-internet.com.br/og-image.jpg" />
+  <meta property="og:site_name" content="MhNet Internet Fibra" />
+  <meta property="og:image" content="https://assine-mhnet.com.br/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="WebTurbo Internet - Parceira de vendas autorizada MhNet. Planos de internet fibra a partir de R$ 99,90/mês." />
+  <meta property="og:image:alt" content="Planos MhNet Internet em Piratuba Fibra com atendimento de parceiro autorizado." />
   <meta property="og:locale" content="pt_BR" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Internet MhNet em Piratuba | WebTurbo" />
   <meta name="twitter:description" content="Consulte cobertura MhNet em Piratuba - SC com a WebTurbo, agente autorizado. Veja planos de internet fibra e contrate online." />
-  <meta name="twitter:image" content="https://webturbo-internet.com.br/og-image.jpg" />
+  <meta name="twitter:image" content="https://assine-mhnet.com.br/og-image.jpg" />
 
   <link rel="canonical" href="https://webturbo-internet.com.br/internet-mhnet-piratuba/" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
@@ -47,7 +47,17 @@
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'AW-17075496858');
+    gtag('config', 'AW-18209661462');
+    gtag('config', 'G-FQ4D45L8CS');
   </script>
+
+  <!-- Leaflet.js - mapa interativo OpenStreetMap -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIINfQK7G8d9D50DfxWg5y6nRHITCoM4aE="
+    crossorigin=""
+  />
 
   <style>
     /* ── TOKENS ── */
@@ -62,7 +72,7 @@
       --gray-bg:   #f4f7fc;
       --gray-line: #dde4ef;
       --text:      #1a1a2e;
-      --muted:     #5a6a82;
+      --muted:     #4a5a70;
       --max:       1200px;
       --radius:    12px;
       --radius-lg: 20px;
@@ -171,10 +181,13 @@
       height: 44px;
       padding: 0 20px;
       border-radius: 8px;
+      border: none;
       background: var(--green);
       color: var(--white);
+      font-family: 'Montserrat', sans-serif;
       font-weight: 700;
       font-size: 14px;
+      cursor: pointer;
       transition: filter .18s, transform .18s;
       white-space: nowrap;
     }
@@ -288,6 +301,28 @@
     .plans::-webkit-scrollbar { height: 6px; }
     .plans::-webkit-scrollbar-track { background: var(--gray-line); border-radius: 999px; }
     .plans::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 999px; }
+
+    .plans-scroll-hint {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 2;
+      width: 36px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to right, transparent, rgba(244,247,252,.95) 60%);
+      font-size: 28px;
+      color: #1a56db;
+      font-weight: 700;
+      pointer-events: none;
+      border-radius: 0 12px 12px 0;
+      transition: opacity .3s ease;
+    }
+
+    .plans-scroll-hint.hidden { opacity: 0; }
 
     .plan {
       background: var(--white);
@@ -1203,6 +1238,236 @@
 
     .floating-wa-icon svg { width: 24px; height: 24px; display: block; }
 
+
+
+    /* ── MODAL CONSULTA WHATSAPP FLUTUANTE ── */
+    .floating-wa {
+      font-family: 'Montserrat', sans-serif;
+      cursor: pointer;
+    }
+
+    .wt-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,15,40,.8);
+      backdrop-filter: blur(6px);
+      z-index: 110;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .wt-modal-overlay.open { display: flex; }
+
+    .wt-modal {
+      width: 100%;
+      max-width: 500px;
+      max-height: calc(100dvh - 32px);
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 0 40px 100px rgba(10,36,99,.35);
+      border: 1px solid var(--gray-line);
+    }
+
+    .wt-modal-head {
+      background: var(--blue);
+      color: #fff;
+      padding: 22px 24px;
+      position: relative;
+    }
+
+    .wt-modal-head h3 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 0 8px;
+      color: #fff;
+      padding-right: 34px;
+    }
+
+    .wt-modal-head p {
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(255,255,255,.9);
+      max-width: 390px;
+      margin: 0;
+    }
+
+    .wt-close {
+      position: absolute;
+      right: 14px;
+      top: 13px;
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .18s;
+    }
+
+    .wt-close:hover { background: rgba(255,255,255,.24); }
+
+    .wt-modal-body { padding: 24px; background: var(--white); }
+
+    .wt-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .wt-extra-address {
+      display: none;
+    }
+
+    .wt-extra-address.show {
+      display: contents;
+    }
+
+    .wt-field.full { grid-column: 1 / -1; }
+
+    .wt-field label {
+      display: block;
+      color: var(--blue);
+      font-size: 12px;
+      letter-spacing: .03em;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .wt-field input {
+      width: 100%;
+      height: 50px;
+      border: 1.5px solid var(--gray-line);
+      border-radius: 8px;
+      background: var(--gray-bg);
+      padding: 0 14px;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      font-family: 'Open Sans', sans-serif;
+      transition: border-color .18s, box-shadow .18s, background .18s;
+    }
+
+    .wt-field input:focus {
+      border-color: var(--blue-light);
+      box-shadow: 0 0 0 3px rgba(26,86,219,.14);
+      background: var(--white);
+    }
+
+    .wt-field input[readonly] {
+      background: #eef2f7;
+      color: var(--muted);
+    }
+
+    .wt-field input::placeholder { color: #9aabbb; }
+
+    .wt-modal-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .wt-btn-modal {
+      height: 50px;
+      padding: 0 28px;
+      border-radius: 8px;
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      transition: filter .18s, transform .18s;
+    }
+
+    .wt-btn-modal:hover {
+      filter: brightness(1.12);
+      transform: translateY(-1px);
+    }
+
+    .wt-btn-modal:disabled { opacity: .7; cursor: not-allowed; transform: none; }
+
+    .wt-status {
+      margin-top: 12px;
+      border: 1px solid var(--gray-line);
+      border-radius: 8px;
+      background: var(--gray-bg);
+      padding: 14px;
+      color: var(--text);
+      font-size: 14px;
+      min-height: 68px;
+      line-height: 1.5;
+    }
+
+    .wt-status small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+      font-weight: 800;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+
+    .wt-status.ok  { background: #effdf5; border-color: #b7efcc; color: #0f7a3a; }
+    .wt-status.bad { background: #fff5f5; border-color: #ffcaca; color: #b42318; }
+
+    .wt-modal-choice {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-top: 12px;
+      padding-bottom: 4px;
+    }
+
+    .wt-modal-choice p {
+      margin: 8px 0 4px;
+      color: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .wt-choice-primary,
+    .wt-choice-secondary {
+      min-height: 44px;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .wt-choice-primary {
+      border: none;
+      background: var(--blue);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .wt-choice-secondary {
+      background: var(--green);
+      color: #fff;
+    }
+
     /* ── MODAL ── */
     .modal-overlay {
       position: fixed;
@@ -1543,6 +1808,149 @@
       font-weight: 700;
     }
 
+
+
+    /* ── LOCALIZAÇÃO FIXA NO MODAL ── */
+    .btn-nao-sei-cep {
+      margin-top: 8px;
+      border: none;
+      background: transparent;
+      color: var(--blue-light);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+      padding: 0;
+    }
+
+    .btn-nao-sei-cep:hover { text-decoration: underline; }
+
+    .modal-location-box {
+      display: none;
+      grid-column: 1 / -1;
+      border: 1.5px solid var(--gray-line);
+      background: #f8fbff;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 4px;
+    }
+
+    .modal-location-box.show { display: block; }
+
+    .modal-location-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .modal-location-head strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 3px;
+    }
+
+    .modal-location-head span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .btn-location-current {
+      min-height: 40px;
+      border: none;
+      border-radius: 8px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 0 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: filter .18s, transform .18s;
+    }
+
+    .btn-location-current:hover:not(:disabled) {
+      filter: brightness(1.07);
+      transform: translateY(-1px);
+    }
+
+    .btn-location-current:disabled {
+      opacity: .7;
+      cursor: not-allowed;
+    }
+
+    .modal-location-map {
+      width: 100%;
+      height: 260px;
+      border-radius: 10px;
+      border: 1px solid var(--gray-line);
+      overflow: hidden;
+      margin: 10px 0;
+      background: #e8edf5;
+    }
+
+    .modal-location-status {
+      border: 1px solid var(--gray-line);
+      background: #fff;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .modal-location-status.ok {
+      background: #effdf5;
+      border-color: #b7efcc;
+      color: #0f7a3a;
+    }
+
+    .modal-location-status.bad {
+      background: #fff5f5;
+      border-color: #ffcaca;
+      color: #b42318;
+    }
+
+    .modal-location-address {
+      width: 100%;
+      min-height: 58px;
+      border-radius: 8px;
+      border: 1.5px solid var(--gray-line);
+      background: #eef2f7;
+      color: var(--muted);
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      resize: vertical;
+      outline: none;
+      font-family: 'Open Sans', system-ui, sans-serif;
+    }
+
+    .modal-location-coords {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+
+    /* ── GUIA DISCRETO APÓS LOCALIZAÇÃO ── */
+    .wt-guide-focus {
+      outline: 3px solid rgba(0,200,83,.85) !important;
+      outline-offset: 3px !important;
+      box-shadow: 0 0 0 6px rgba(0,200,83,.14) !important;
+      transition: outline .18s ease, box-shadow .18s ease;
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1024px) {
       .coverage-grid { grid-template-columns: 1fr; gap: 36px; }
@@ -1583,15 +1991,53 @@
       .faq-section { padding: 40px 0 48px; }
 
       .floating-wa {
-        right: 12px; bottom: 12px;
-        padding: 10px 12px;
-        border-radius: 12px;
-        min-height: 0;
+        right: 12px;
+        bottom: 12px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        min-height: 48px;
         gap: 8px;
+        width: max-content;
+        max-width: calc(100vw - 32px);
+        white-space: nowrap;
       }
-      .floating-wa-text { font-size: 13px; white-space: normal; max-width: 88px; line-height: 1.1; }
-      .floating-wa-icon { width: 28px; height: 28px; background: transparent; }
-      .floating-wa-icon svg { width: 22px; height: 22px; }
+
+      .floating-wa-text {
+        font-size: 13px;
+        white-space: nowrap;
+        max-width: none;
+        line-height: 1;
+      }
+
+      .floating-wa-icon {
+        width: 28px;
+        height: 28px;
+        background: transparent;
+      }
+
+      .floating-wa-icon svg {
+        width: 22px;
+        height: 22px;
+      }
+
+
+      .wt-modal-overlay {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: 12px;
+      }
+
+      .wt-modal {
+        margin: 12px 0;
+        max-height: calc(100dvh - 24px);
+      }
+
+      .wt-modal-body {
+        padding: 20px 20px calc(24px + env(safe-area-inset-bottom));
+      }
+      .wt-modal-head { padding: 21px 20px; }
+      .wt-modal-head h3 { font-size: 20px; }
+      .wt-form-grid { grid-template-columns: 1fr; }
 
       .footer-simple { flex-direction: column; text-align: center; gap: 12px; }
       .footer-copy { text-align: center; }
@@ -1601,11 +2047,336 @@
       .mgrid { grid-template-columns: 1fr; }
       .mgrid .mfield.full { grid-column: 1 / -1; }
       .summary-row { grid-template-columns: 1fr; gap: 2px; }
+
+      .modal-location-head {
+        flex-direction: column;
+      }
+
+      .btn-location-current {
+        width: 100%;
+      }
+
+      .modal-location-map {
+        height: 230px;
+      }
+
+      .modal-location-coords {
+        grid-template-columns: 1fr;
+      }
+
     }
 
     @media (max-width: 390px) {
       .btn-whats { font-size: 12px; height: 38px; padding: 0 12px; }
     }
+
+
+    /* ── LOADING GLOBAL ── */
+    .global-loading {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(5,15,40,.72);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      cursor: wait;
+    }
+
+    .global-loading.show { display: flex; }
+
+    .global-loading-card {
+      width: 100%;
+      max-width: 320px;
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px 24px;
+      text-align: center;
+      box-shadow: 0 30px 90px rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .global-loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(10,36,99,.16);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 1.15s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    .global-loading-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .global-loading-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    body.global-loading-active { overflow: hidden; }
+
+
+    /* ── RECOLHER MAPA APÓS LOCALIZAÇÃO ── */
+    .modal-location-box.location-collapsed {
+      padding: 12px 14px;
+      background: #effdf5;
+      border-color: #b7efcc;
+    }
+
+    .modal-location-box.location-collapsed .modal-location-head {
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .modal-location-box.location-collapsed .modal-location-head span {
+      display: none;
+    }
+
+    .modal-location-box.location-collapsed .modal-location-head strong {
+      margin-bottom: 0;
+      color: #0f7a3a;
+    }
+
+    .modal-location-box.location-collapsed .modal-location-map,
+    .modal-location-box.location-collapsed .map-tap-hint,
+    .modal-location-box.location-collapsed .modal-location-address,
+    .modal-location-box.location-collapsed .modal-location-coords,
+    .modal-location-box.location-collapsed label[for="consultaEnderecoDetectadoLocalizacao"],
+    .modal-location-box.location-collapsed label[for="mEnderecoDetectadoLocalizacao"],
+    .modal-location-box.location-collapsed label[for="wtEnderecoDetectadoLocalizacaoWhats"] {
+      display: none !important;
+    }
+
+    .modal-location-box.location-collapsed .modal-location-status {
+      margin: 0;
+      padding: 9px 11px;
+      min-height: 0;
+      font-size: 12px;
+      background: #ffffff;
+      border-color: #b7efcc;
+      color: #0f7a3a;
+    }
+
+    .modal-location-box.location-collapsed .btn-location-current {
+      min-height: 36px;
+      padding: 0 12px;
+      font-size: 11px;
+      background: #ffffff;
+      color: var(--blue);
+      border: 1px solid rgba(10,36,99,.18);
+      box-shadow: none;
+      animation: none;
+    }
+
+    /* ── OTIMIZAÇÕES MOBILE - LOCALIZAÇÃO E UX ── */
+
+    /* Mapa altura maior no mobile para facilitar clique */
+    @media (max-width: 768px) {
+      .modal-location-map {
+        height: 280px;
+        cursor: crosshair;
+      }
+      /* Coordenadas em coluna única no mobile */
+      .modal-location-coords {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Botão de localização: mais destaque */
+    .btn-location-current {
+      background: var(--green);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      border-radius: 10px;
+      min-height: 46px;
+      padding: 0 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0,200,83,.28);
+      transition: filter .18s, transform .18s, box-shadow .18s;
+    }
+
+    .btn-location-current:hover:not(:disabled) {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0,200,83,.36);
+    }
+
+    .btn-location-current:disabled {
+      opacity: .65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Status de localização com fonte ligeiramente maior */
+    .modal-location-status {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* Box de localização com borda de destaque */
+    .modal-location-box {
+      border-color: var(--blue-light);
+      background: #f0f5ff;
+    }
+
+    /* Hint "Toque no mapa" no mobile */
+    .map-tap-hint {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      margin: 4px 0 6px;
+      padding: 6px 10px;
+      background: rgba(26,86,219,.06);
+      border-radius: 6px;
+      border: 1px dashed rgba(26,86,219,.18);
+    }
+
+    /* Planos: scroll suave e borda de indicação no mobile */
+    @media (max-width: 640px) {
+      .plans {
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 16px;
+      }
+      .plan {
+        flex: 0 0 88%;
+        max-width: 88%;
+      }
+      /* Campos de formulário: tamanho de fonte mínimo 16px para evitar zoom no iOS */
+      .field input,
+      .wt-field input,
+      .mfield input,
+      .mfield select {
+        font-size: 16px !important;
+      }
+      /* Botão de consultar cobertura: maior e mais fácil de tocar */
+      #btnConsultar {
+        min-height: 56px;
+        font-size: 15px;
+        border-radius: 10px;
+      }
+      /* Ações do modal em coluna no mobile */
+      .consult-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+      #btnLimpar {
+        height: 44px;
+        width: 100%;
+      }
+      /* Modal de etapas: header padding menor */
+      .modal-header {
+        padding: 18px 16px 14px;
+      }
+      /* Steps indicator menor */
+      .modal-steps {
+        gap: 4px;
+        margin-bottom: 14px;
+      }
+      .modal-step {
+        height: 3px;
+      }
+      /* Botões de ação do modal sempre em coluna */
+      .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .btn-modal-back {
+        width: 100%;
+        justify-content: center;
+      }
+      .btn-modal-next,
+      .btn-modal-submit {
+        min-height: 52px;
+        font-size: 15px;
+      }
+      /* Safe area inferior para modais */
+      .wt-modal-body,
+      .modal-body {
+        padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      }
+    }
+
+    /* Mapa: cursor de mira para indicar que é clicável */
+    .modal-location-map {
+      cursor: crosshair;
+      position: relative;
+    }
+
+    /* Textarea de endereço detectado */
+    .modal-location-address {
+      font-size: 13px;
+      line-height: 1.55;
+      min-height: 64px;
+      color: var(--text);
+      background: #eef2f7;
+      border: 1.5px solid var(--gray-line);
+    }
+
+    .modal-location-address:not(:empty),
+    .modal-location-address[value]:not([value=""]) {
+      background: #f0fdf4;
+      border-color: rgba(0,200,83,.35);
+      color: #1a5c34;
+    }
+
+    /* Coords fields: fundo verde quando preenchido */
+    #mLatitudeFixa:not([value=""]):not([placeholder]),
+    #mLongitudeFixa:not([value=""]):not([placeholder]),
+    #consultaLatitudeFixa:not([value=""]),
+    #consultaLongitudeFixa:not([value=""]),
+    #wtLatitudeFixaWhats:not([value=""]),
+    #wtLongitudeFixaWhats:not([value=""]) {
+      background: #f0fdf4 !important;
+      border-color: rgba(0,200,83,.4) !important;
+      color: #1a5c34;
+      font-weight: 700;
+    }
+
+    /* Label "Não sei meu CEP" - maior área de toque */
+    .btn-nao-sei-cep {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      min-height: 36px;
+      padding: 4px 0;
+      font-size: 13px;
+    }
+
+    /* Animação de pulse no botão de localização */
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 4px 14px rgba(0,200,83,.28); }
+      50% { box-shadow: 0 4px 20px rgba(0,200,83,.5); }
+    }
+
+    .btn-location-pulse {
+      animation: pulse-green 1.8s ease-in-out infinite;
+    }
+
+    /* Toast abandono: safe area no mobile */
+    @media (max-width: 430px) {
+      .wt-s2-toast-abandono {
+        bottom: calc(88px + env(safe-area-inset-bottom));
+      }
+    }
+
   </style>
 
   <!-- Schema.org JSON-LD -->
@@ -1613,9 +2384,9 @@
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "name": "WebTurbo Internet",
-    "description": "Agente autorizado MhNet para consulta de cobertura e contratação de internet fibra óptica.",
-    "url": "https://webturbo-internet.com.br/",
+    "name": "MhNet Internet Fibra",
+    "description": "Consulta de cobertura e solicitação de contratação de planos MhNet Internet Fibra.",
+    "url": "https://assine-mhnet.com.br/",
     "telephone": "+555193187300",
     "areaServed": ["RS","SC","PR","SP","MS"],
     "priceRange": "R$ 99,90 – R$ 159,90/mês"
@@ -1626,11 +2397,11 @@
     "@context":"https://schema.org",
     "@type":"FAQPage",
     "mainEntity":[
-      {"@type":"Question","name":"A WebTurbo é a MhNet?","acceptedAnswer":{"@type":"Answer","text":"A WebTurbo é agente autorizado MhNet para atendimento comercial, consulta de cobertura e contratação."}},
+      {"@type":"Question","name":"Como consultar cobertura da MhNet?","acceptedAnswer":{"@type":"Answer","text":"Informe seu CEP e número para verificar se há disponibilidade de planos MhNet no endereço."}},
       {"@type":"Question","name":"Como consultar a cobertura?","acceptedAnswer":{"@type":"Answer","text":"Informe CEP e número. Se houver cobertura, o site libera as opções de contratação."}},
-      {"@type":"Question","name":"Quais cidades a WebTurbo atende?","acceptedAnswer":{"@type":"Answer","text":"A WebTurbo realiza atendimento comercial para consulta de cobertura e contratação em cidades dos estados RS, SC, PR, SP e MS."}},
-      {"@type":"Question","name":"Como funciona a contratação?","acceptedAnswer":{"@type":"Answer","text":"Após confirmar cobertura, escolha o plano e avance pelo site ou WhatsApp."}},
-      {"@type":"Question","name":"Os planos têm taxa de instalação?","acceptedAnswer":{"@type":"Answer","text":"A instalação pode ser gratuita conforme oferta vigente e viabilidade técnica."}}
+      {"@type":"Question","name":"Como saber se a MhNet atende minha cidade?","acceptedAnswer":{"@type":"Answer","text":"A disponibilidade depende da cobertura e viabilidade técnica no endereço informado."}},
+      {"@type":"Question","name":"Como funciona a contratação?","acceptedAnswer":{"@type":"Answer","text":"Após confirmar cobertura, escolha o plano disponível no site e avance com o preenchimento dos dados para solicitar a contratação."}},
+      {"@type":"Question","name":"Os planos têm taxa de instalação?","acceptedAnswer":{"@type":"Answer","text":"A instalação é gratuita em todos os planos apresentados no site, desde que haja viabilidade técnica no endereço informado."}}
     ]
   }
   </script>
@@ -1645,26 +2416,32 @@
 </head>
 <body>
 
+  <div id="globalLoading" class="global-loading" aria-hidden="true">
+    <div class="global-loading-card" role="status" aria-live="polite">
+      <div class="global-loading-spinner"></div>
+      <div id="globalLoadingTitle" class="global-loading-title">Carregando...</div>
+      <div id="globalLoadingText" class="global-loading-text">Aguarde, estamos processando sua solicitação.</div>
+    </div>
+  </div>
+
+
   <a class="skip-nav" href="#conteudo-principal">Pular para o conteúdo principal</a>
 
   <!-- ── HEADER ── -->
   <header class="topbar">
     <div class="container topbar-inner">
       <div class="brand">
-        <strong>WebTurbo</strong>
-        <span>Agente autorizado MhNet</span>
+        <strong>MhNet Internet</strong>
+        <span>Internet Fibra</span>
       </div>
 
       <nav class="nav-actions" aria-label="Navegação principal">
         <a href="#consulta" class="btn-nav-link">Cobertura</a>
         <a href="#planos" class="btn-nav-link">Planos</a>
         <a href="#cidades" class="btn-nav-link">Cidades</a>
-        <a class="btn-whats"
-           href="https://wa.me/555193187300?text=Olá!%20Quero%20falar%20sobre%20os%20planos%20MhNet%20com%20a%20WebTurbo."
-           target="_blank" rel="noopener noreferrer"
-           aria-label="Falar no WhatsApp da WebTurbo">
-          Atendimento online
-        </a>
+        <button class="btn-whats" type="button" id="botaoWhatsTopo" aria-label="Consultar cobertura">
+          Contratar pelo WhatsApp
+        </button>
       </nav>
     </div>
   </header>
@@ -1672,17 +2449,17 @@
   <main id="conteudo-principal">
 
     <!-- ── BANNER ── -->
-    <section class="hero-banner" aria-label="Banner principal WebTurbo">
+    <section class="hero-banner" aria-label="Banner principal MhNet Internet Fibra">
       <div class="hero-banner-card">
         <img src="/hero-conectando.png"
-             alt="Conectando você com o que realmente importa - Internet fibra MhNet com atendimento WebTurbo"
+             alt="Planos MhNet Internet em Piratuba Fibra com atendimento de parceiro autorizado"
              width="1672" height="941"
              loading="eager"
              onerror="this.style.display='none';document.getElementById('hero-fallback').style.display='block';" />
         <div id="hero-fallback" class="hero-content-fallback container">
-          <span class="section-eyebrow" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25);">🌐 Internet Fibra Óptica</span>
-          <h1 style="font-family:Montserrat,sans-serif;font-size:clamp(32px,5vw,64px);font-weight:900;color:#fff;letter-spacing:-1px;margin:16px 0 10px;">Conecte-se com<br>o que importa</h1>
-          <p style="font-size:18px;color:rgba(255,255,255,.78);max-width:540px;margin:0 auto 28px;">Internet fibra MhNet com atendimento autorizado WebTurbo. A partir de R$ 99,90/mês.</p>
+          <span class="section-eyebrow" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.25);">Internet Fibra Óptica</span>
+          <h1 style="font-family:Montserrat,sans-serif;font-size:clamp(32px,5vw,64px);font-weight:900;color:#fff;letter-spacing:-1px;margin:16px 0 10px;">Planos MhNet Internet em Piratuba Fibra</h1>
+          <p style="font-size:18px;color:rgba(255,255,255,.78);max-width:540px;margin:0 auto 28px;">Consulte cobertura no seu endereço e contrate com atendimento de parceiro autorizado.</p>
           <a href="#planos" class="btn-primary" style="margin:0 auto;">Ver planos</a>
         </div>
       </div>
@@ -1697,7 +2474,9 @@
           <p>Ofertas disponíveis em Piratuba - SC, conforme cobertura e viabilidade técnica no seu endereço.</p>
         </div>
 
-        <div class="plans">
+        <div class="plans-wrapper" style="position:relative;">
+          <div class="plans-scroll-hint" aria-hidden="true">›</div>
+          <div class="plans" id="plansTrack">
           <article class="plan">
             <div class="plan-badge">Plano econômico</div>
             <h3>500 Mega</h3>
@@ -1716,7 +2495,7 @@
               <li>Ótimo custo-benefício</li>
               <li>Ideal para uso residencial</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -1737,7 +2516,7 @@
               <li>Wi-Fi incluso</li>
               <li>Ideal para streaming</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB + GLOBOPLAY')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500_GLOBOPLAY')">Contratar agora</button>
           </article>
 
           <article class="plan featured">
@@ -1758,7 +2537,7 @@
               <li>Mais cobertura na casa</li>
               <li>Ideal para múltiplos dispositivos</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 500MB + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_500_WIFI_EXTRA')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -1779,7 +2558,7 @@
               <li>Globoplay incluso</li>
               <li>Casa conectada e entretenimento</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_600_WIFI_EXTRA_GLOBOPLAY')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -1800,7 +2579,7 @@
               <li>Mais alcance dentro da casa</li>
               <li>Ideal para alta demanda</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 700MB + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_700_WIFI_EXTRA')">Contratar agora</button>
           </article>
 
           <article class="plan">
@@ -1821,8 +2600,9 @@
               <li>Máxima performance no dia a dia</li>
               <li>Para alta demanda</li>
             </ul>
-            <button class="btn-contratar-plano" onclick="abrirModal('FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI')">Contratar agora</button>
+            <button class="btn-contratar-plano" onclick="abrirModal('MHNET_1000_WIFI_EXTRA')">Contratar agora</button>
           </article>
+          </div>
         </div>
       </div>
     </section>
@@ -1832,7 +2612,7 @@
       <div class="container coverage-grid">
         <div class="coverage-left">
           <span class="section-eyebrow">⚡ Internet fibra MhNet</span>
-          <h1>Consulte cobertura MhNet</h1>
+          <h1>Planos MhNet Internet em Piratuba Fibra</h1>
           <p>Informe CEP e número para verificar a disponibilidade de fibra óptica no seu endereço.</p>
 
           <div class="coverage-trust">
@@ -1849,7 +2629,7 @@
 
         <aside class="consult-card" aria-label="Consulta de cobertura">
           <div class="consult-card-header">
-            <h2>Consulte sua cobertura</h2>
+            <h2>Consulte cobertura no seu endereço</h2>
             <p>Digite o CEP e o número do imóvel para verificar disponibilidade.</p>
           </div>
 
@@ -1858,6 +2638,7 @@
               <div class="field">
                 <label for="cep">CEP</label>
                 <input id="cep" type="text" inputmode="numeric" placeholder="00000-000" maxlength="9" autocomplete="postal-code" />
+                <button type="button" class="btn-nao-sei-cep" id="btnNaoSeiCepConsulta">Não sei meu CEP</button>
               </div>
 
               <div class="field">
@@ -1865,7 +2646,38 @@
                 <input id="numero" type="text" inputmode="numeric" placeholder="Número" autocomplete="address-line2" />
               </div>
 
-              <div id="consultaEnderecoCompleto" class="consult-extra-address">
+              
+<div class="modal-location-box" id="consultaLocationBox">
+                  <div class="modal-location-head">
+                    <div>
+                      <strong>📍 Não sabe o CEP? Use o mapa!</strong>
+                      <span>Toque no mapa para marcar sua casa, ou clique em "Capturar minha localização". Se o ponto cair errado, arraste o marcador.</span>
+                    </div>
+                    <button type="button" class="btn-location-current btn-location-pulse" id="btnUsarLocalizacaoConsulta">📍 Capturar minha localização</button>
+                  </div>
+
+                  <div id="consultaLocationStatus" class="modal-location-status">📍 Toque no mapa ou clique em "Capturar minha localização" para marcar sua casa com precisão.</div>
+                  <div class="map-tap-hint" aria-hidden="true">👆 Toque/clique no mapa para fixar sua localização</div>
+                  <div id="consultaLocationMap" class="modal-location-map" aria-label="Mapa para fixar localização"></div>
+
+                  <label for="consultaEnderecoDetectadoLocalizacao" style="display:block;color:var(--blue);font-size:12px;letter-spacing:.03em;font-weight:800;text-transform:uppercase;margin:8px 0;">Endereço detectado pela localização</label>
+                  <textarea id="consultaEnderecoDetectadoLocalizacao" class="modal-location-address" readonly placeholder="O endereço aproximado aparecerá aqui automaticamente após tocar no mapa ou capturar a localização."></textarea>
+
+                  <div class="modal-location-coords">
+                    <div class="field">
+                      <label for="consultaLatitudeFixa">Latitude (gerado)</label>
+                      <input id="consultaLatitudeFixa" type="text" readonly placeholder="Automático" />
+                    </div>
+                    <div class="field">
+                      <label for="consultaLongitudeFixa">Longitude (gerado)</label>
+                      <input id="consultaLongitudeFixa" type="text" readonly placeholder="Automático" />
+                    </div>
+                  </div>
+
+                  <input type="hidden" id="consultaCoordenadasFixas" />
+                  <input type="hidden" id="consultaLinkLocalizacaoFixa" />
+                </div>
+<div id="consultaEnderecoCompleto" class="consult-extra-address">
                 <div class="field full">
                   <label for="consultaLogradouro">Logradouro</label>
                   <input id="consultaLogradouro" type="text" placeholder="Rua / Avenida" autocomplete="address-line1" />
@@ -1932,7 +2744,7 @@
     <section class="benefits-section" id="por-que-webturbo" aria-labelledby="titulo-beneficios">
       <div class="container">
         <div class="section-head">
-          <span class="section-eyebrow">Por que WebTurbo?</span>
+          <span class="section-eyebrow">Por que MhNet Internet Fibra?</span>
           <h2 id="titulo-beneficios">Internet fibra para tudo que você faz</h2>
           <p>Navegue, assista, jogue e trabalhe com internet fibra MhNet.</p>
         </div>
@@ -1965,7 +2777,7 @@
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" fill="white"/>
               </svg>
             </div>
-            <h3>Atendimento online</h3>
+            <h3>Contratar pelo WhatsApp</h3>
             <p>Contrate pelo site ou diretamente pelo WhatsApp.</p>
           </div>
           <div class="mini-benefit">
@@ -2017,7 +2829,7 @@
         <div class="cities-text">
           <span class="section-eyebrow">Área de atendimento</span>
           <h2 id="titulo-cidades-seo">Cidades atendidas pela MhNet</h2>
-          <p>A WebTurbo realiza atendimento comercial como agente autorizado MhNet em diversas cidades dos estados RS, SC, PR, SP e MS.</p>
+          <p>A disponibilidade depende da cobertura e viabilidade técnica no endereço informado.</p>
           <p>Consulte a cobertura no seu endereço e veja os planos de internet fibra disponíveis na sua região.</p>
           <a href="/cidades-atendidas/" class="link-more">Ver todas as cidades atendidas →</a>
         </div>
@@ -2077,8 +2889,8 @@
 
         <div class="faq">
           <details class="faq-item">
-            <summary>A WebTurbo é a MhNet?</summary>
-            <p>A WebTurbo é agente autorizado MhNet para atendimento comercial, consulta de cobertura e contratação de planos de internet fibra.</p>
+            <summary>Como consultar cobertura da MhNet?</summary>
+            <p>Informe seu CEP e número para verificar se há disponibilidade de planos MhNet no endereço.</p>
           </details>
           <details class="faq-item">
             <summary>Como consultar a cobertura?</summary>
@@ -2090,15 +2902,15 @@
           </details>
           <details class="faq-item">
             <summary>Como funciona a contratação?</summary>
-            <p>Após confirmar a cobertura, escolha o plano e avance pelo site ou siga com nossa equipe no WhatsApp.</p>
+            <p>Após confirmar a cobertura, escolha o plano disponível no site e avance com o preenchimento dos dados para solicitar a contratação.</p>
           </details>
           <details class="faq-item">
             <summary>Os planos podem variar por região?</summary>
-            <p>Sim. Planos e ofertas podem variar conforme a cidade e a viabilidade técnica do endereço.</p>
+            <p>Os planos apresentados no site são as ofertas vigentes. A disponibilidade depende apenas da viabilidade técnica no endereço informado.</p>
           </details>
           <details class="faq-item">
             <summary>Os planos têm taxa de instalação?</summary>
-            <p>A instalação pode ser gratuita conforme a oferta vigente e a viabilidade técnica. Confirme as condições com nosso atendimento pelo WhatsApp antes de contratar.</p>
+            <p>A instalação é gratuita em todos os planos apresentados no site, desde que haja viabilidade técnica no endereço informado.</p>
           </details>
         </div>
       </div>
@@ -2143,6 +2955,7 @@
             <div class="mfield" id="field-mCep">
               <label for="mCep">CEP *</label>
               <input id="mCep" type="text" inputmode="numeric" maxlength="9" placeholder="00000-000" autocomplete="postal-code" />
+              <button type="button" class="btn-nao-sei-cep" id="btnNaoSeiCepModal">Não sei meu CEP</button>
               <span class="mfield-error-msg" id="err-mCep">Informe um CEP válido.</span>
             </div>
             <div class="mfield" id="field-mNumero">
@@ -2150,7 +2963,40 @@
               <input id="mNumero" type="text" placeholder="Nº" autocomplete="address-line2" />
               <span class="mfield-error-msg" id="err-mNumero">Informe o número.</span>
             </div>
-            <div id="modalEnderecoCompleto" class="modal-extra-address">
+            
+<div class="modal-location-box" id="modalLocationBox">
+              <div class="modal-location-head">
+                <div>
+                  <strong>📍 Não sabe o CEP? Use o mapa!</strong>
+                  <span>Toque no mapa para marcar sua casa, ou clique em "Capturar minha localização". Se o ponto cair errado, arraste o marcador.</span>
+                </div>
+                <button type="button" class="btn-location-current btn-location-pulse" id="btnUsarLocalizacaoModal">📍 Capturar minha localização</button>
+              </div>
+
+              <div id="modalLocationStatus" class="modal-location-status">📍 Toque no mapa ou clique em "Capturar minha localização" para marcar sua casa com precisão.</div>
+              <div class="map-tap-hint" aria-hidden="true">👆 Toque/clique no mapa para fixar sua localização</div>
+              <div id="modalLocationMap" class="modal-location-map" aria-label="Mapa para fixar localização"></div>
+
+              <label for="mEnderecoDetectadoLocalizacao" style="display:block;color:var(--blue);font-size:12px;letter-spacing:.03em;font-weight:800;text-transform:uppercase;margin:8px 0;">Endereço detectado pela localização</label>
+              <textarea id="mEnderecoDetectadoLocalizacao" class="modal-location-address" readonly placeholder="O endereço aproximado aparecerá aqui automaticamente após tocar no mapa ou capturar a localização."></textarea>
+
+              <div class="modal-location-coords">
+                <div class="mfield" id="field-mLatitudeFixa">
+                  <label for="mLatitudeFixa">Latitude</label>
+                  <input id="mLatitudeFixa" type="text" readonly placeholder="Automático" />
+                  <span class="mfield-error-msg" id="err-mLatitudeFixa"></span>
+                </div>
+                <div class="mfield" id="field-mLongitudeFixa">
+                  <label for="mLongitudeFixa">Longitude</label>
+                  <input id="mLongitudeFixa" type="text" readonly placeholder="Automático" />
+                  <span class="mfield-error-msg" id="err-mLongitudeFixa"></span>
+                </div>
+              </div>
+
+              <input type="hidden" id="mCoordenadasFixas" />
+              <input type="hidden" id="mLinkLocalizacaoFixa" />
+            </div>
+<div id="modalEnderecoCompleto" class="modal-extra-address">
             <div class="mfield full" id="field-mLogradouro">
               <label for="mLogradouro">Logradouro *</label>
               <input id="mLogradouro" type="text" placeholder="Rua / Avenida" />
@@ -2214,12 +3060,12 @@
               <label for="mPlano">Plano desejado *</label>
               <select id="mPlano">
                 <option value="">Selecione o plano...</option>
-                <option value="FIBRA 500MB">FIBRA 500MB — R$ 99,90/mês</option>
-                <option value="FIBRA 500MB + GLOBOPLAY">FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês</option>
-                <option value="FIBRA 500MB + 1 PONTO EXTRA DE WI-FI">FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês</option>
-                <option value="FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY">FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês</option>
-                <option value="FIBRA 700MB + 1 PONTO EXTRA DE WI-FI">FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês</option>
-                <option value="FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI">FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês</option>
+                <option value="MHNET_500">FIBRA 500MB — R$ 99,90/mês</option>
+                <option value="MHNET_500_GLOBOPLAY">FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês</option>
+                <option value="MHNET_500_WIFI_EXTRA">FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês</option>
+                <option value="MHNET_600_WIFI_EXTRA_GLOBOPLAY">FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês</option>
+                <option value="MHNET_700_WIFI_EXTRA">FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês</option>
+                <option value="MHNET_1000_WIFI_EXTRA">FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês</option>
               </select>
               <span class="mfield-error-msg" id="err-mPlano">Selecione o plano desejado.</span>
             </div>
@@ -2383,8 +3229,8 @@
   <footer class="footer">
     <div class="container footer-simple">
       <div class="footer-brand">
-        <strong>WebTurbo</strong>
-        <span>Agente autorizado MhNet</span>
+        <strong>MhNet Internet Fibra</strong>
+        <span>Internet Fibra MhNet</span>
       </div>
 
       <div class="footer-links">
@@ -2392,33 +3238,1056 @@
       </div>
 
       <div class="footer-copy">
-        © 2025 WebTurbo Internet. Todos os direitos reservados.
+        Este site é operado por parceiro de vendas autorizado MhNet para consulta de cobertura e solicitação de contratação. A disponibilidade dos planos está sujeita à viabilidade técnica no endereço informado.
       </div>
     </div>
   </footer>
 
-  <!-- ── FLOATING WHATSAPP ── -->
-  <a class="floating-wa"
-     href="https://wa.me/555193187300?text=Olá!%20Quero%20consultar%20os%20planos%20MhNet%20com%20a%20WebTurbo."
-     target="_blank" rel="noopener noreferrer"
-     aria-label="Falar no WhatsApp">
-    <span class="floating-wa-text">WhatsApp</span>
-    <span class="floating-wa-icon">
+  <!-- ── FLOATING WHATSAPP: consulta cobertura antes do WhatsApp ── -->
+  <button class="floating-wa" type="button" id="botaoWhats" aria-label="Contratar pelo WhatsApp">
+    <span class="floating-wa-text">Contratar pelo WhatsApp</span>
+    <span class="floating-wa-icon" aria-hidden="true">
       <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
         <path fill="currentColor" d="M16.04 3C8.86 3 3.03 8.82 3.03 16c0 2.29.6 4.53 1.74 6.5L3 29l6.67-1.75A12.9 12.9 0 0 0 16.04 29C23.22 29 29 23.18 29 16S23.22 3 16.04 3Zm0 23.8c-2.03 0-4.02-.55-5.75-1.6l-.41-.24-3.96 1.04 1.06-3.86-.27-.43A10.74 10.74 0 0 1 5.23 16c0-5.96 4.85-10.8 10.81-10.8 5.95 0 10.76 4.84 10.76 10.8 0 5.96-4.81 10.8-10.76 10.8Zm5.92-8.09c-.32-.16-1.9-.94-2.2-1.05-.3-.11-.52-.16-.74.16-.21.32-.85 1.05-1.04 1.27-.19.21-.38.24-.7.08-.32-.16-1.36-.5-2.59-1.6-.96-.86-1.61-1.92-1.8-2.24-.19-.32-.02-.49.14-.65.14-.14.32-.38.48-.57.16-.19.21-.32.32-.54.11-.21.05-.4-.03-.57-.08-.16-.74-1.78-1.01-2.43-.27-.64-.54-.55-.74-.56h-.63c-.21 0-.57.08-.86.4-.3.32-1.13 1.1-1.13 2.68s1.16 3.11 1.32 3.32c.16.21 2.28 3.48 5.53 4.88.77.33 1.37.53 1.84.68.77.24 1.47.21 2.02.13.62-.09 1.9-.78 2.17-1.53.27-.75.27-1.39.19-1.53-.08-.13-.29-.21-.61-.37Z"/>
       </svg>
     </span>
-  </a>
+  </button>
+
+  <div class="wt-modal-overlay" id="modalConsultaWhats" aria-hidden="true">
+    <div class="wt-modal" role="dialog" aria-modal="true" aria-labelledby="tituloModalWhats">
+      <div class="wt-modal-head">
+        <button class="wt-close" type="button" id="fecharModalWhats" aria-label="Fechar">×</button>
+        <h3 id="tituloModalWhats">Consultar cobertura</h3>
+        <p>Antes de encaminhar para nossa equipe, vamos verificar se temos cobertura no seu endereço.</p>
+      </div>
+      <div class="wt-modal-body">
+        <div class="wt-form-grid">
+          <div class="wt-field">
+            <label for="cepModalWhats">CEP</label>
+            <input id="cepModalWhats" inputmode="numeric" placeholder="00000-000" maxlength="9" />
+            <button type="button" class="btn-nao-sei-cep" id="btnNaoSeiCepWhats">Não sei meu CEP</button>
+          </div>
+          <div class="wt-field">
+            <label for="numeroModalWhats">Número</label>
+            <input id="numeroModalWhats" placeholder="Ex: 322" />
+          </div>
+          <div class="wt-field full">
+            <label for="enderecoModalWhats">Endereço encontrado</label>
+            <input id="enderecoModalWhats" placeholder="Será preenchido automaticamente" readonly />
+          </div>
+
+          
+<div class="modal-location-box" id="wtLocationBoxWhats">
+              <div class="modal-location-head">
+                <div>
+                  <strong>📍 Não sabe o CEP? Use o mapa!</strong>
+                  <span>Toque no mapa para marcar sua casa, ou clique em "Capturar minha localização". Se o ponto cair errado, arraste o marcador.</span>
+                </div>
+                <button type="button" class="btn-location-current btn-location-pulse" id="btnUsarLocalizacaoWhats">📍 Capturar minha localização</button>
+              </div>
+
+              <div id="wtLocationStatusWhats" class="modal-location-status">📍 Toque no mapa ou clique em "Capturar minha localização" para marcar sua casa com precisão.</div>
+              <div class="map-tap-hint" aria-hidden="true">👆 Toque/clique no mapa para fixar sua localização</div>
+              <div id="wtLocationMapWhats" class="modal-location-map" aria-label="Mapa para fixar localização"></div>
+
+              <label for="wtEnderecoDetectadoLocalizacaoWhats" style="display:block;color:var(--blue);font-size:12px;letter-spacing:.03em;font-weight:800;text-transform:uppercase;margin:8px 0;">Endereço detectado pela localização</label>
+              <textarea id="wtEnderecoDetectadoLocalizacaoWhats" class="modal-location-address" readonly placeholder="O endereço aproximado aparecerá aqui automaticamente após tocar no mapa ou capturar a localização."></textarea>
+
+              <div class="modal-location-coords">
+                <div class="wt-field">
+                  <label for="wtLatitudeFixaWhats">Latitude</label>
+                  <input id="wtLatitudeFixaWhats" type="text" readonly placeholder="Automático" />
+                </div>
+                <div class="wt-field">
+                  <label for="wtLongitudeFixaWhats">Longitude</label>
+                  <input id="wtLongitudeFixaWhats" type="text" readonly placeholder="Automático" />
+                </div>
+              </div>
+
+              <input type="hidden" id="wtCoordenadasFixasWhats" />
+              <input type="hidden" id="wtLinkLocalizacaoFixaWhats" />
+            </div>
+<div id="wtEnderecoCompletoWhats" class="wt-extra-address">
+            <div class="wt-field full">
+              <label for="wtLogradouroWhats">Logradouro</label>
+              <input id="wtLogradouroWhats" type="text" placeholder="Rua / Avenida" autocomplete="address-line1" />
+            </div>
+
+            <div class="wt-field">
+              <label for="wtBairroWhats">Bairro</label>
+              <input id="wtBairroWhats" type="text" placeholder="Bairro" />
+            </div>
+
+            <div class="wt-field">
+              <label for="wtCidadeWhats">Cidade</label>
+              <input id="wtCidadeWhats" type="text" placeholder="Cidade" />
+            </div>
+
+            <div class="wt-field">
+              <label for="wtUfWhats">UF</label>
+              <input id="wtUfWhats" type="text" placeholder="UF" maxlength="2" />
+            </div>
+          </div>
+        </div>
+        <div class="wt-modal-actions">
+          <button class="wt-btn-modal" id="consultarModalWhats" type="button">Consultar cobertura</button>
+        </div>
+        <div class="wt-status" id="statusModalWhats">
+          <small>Status da consulta</small>
+          Informe o CEP e número para continuar.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin="">
+  </script>
 
   <script>
     /* ── CONFIGURAÇÕES ── */
-    const ENDPOINT     = "https://consulta-cobertura-mhnet-br-964927461432.southamerica-east1.run.app";
+    const ENDPOINT     = "https://webturbo-crm-api-964927461432.southamerica-east1.run.app/api/v1/public/site-coverage/resolve";
+    const MHNET_LEGACY_ENDPOINT = "https://consulta-cobertura-mhnet-br-964927461432.southamerica-east1.run.app";
+    const SITE_PRE_SALE_ENDPOINT = "https://webturbo-crm-api-964927461432.southamerica-east1.run.app/api/v1/public/site-pre-sales";
     const CLOUD_RUN_URL = "https://modal-easy-964927461432.southamerica-east1.run.app";
     const FIXED_RADIUS = 200;
     const WHATS_NUMBER = "555193187300";
-    const TIMEOUT_MS   = 8000;
+    const TIMEOUT_MS   = 18000;
+
+    /* ── EVENTOS GOOGLE / GA4 ──
+       Funil do site WebTurbo:
+       - clicou_consultar_cobertura
+       - consulta_cobertura_viavel
+       - consulta_cobertura_inviavel
+       - abriu_modal_contratacao
+       - enviou_formulario_easy
+       - erro_envio_formulario
+       - clique_whatsapp
+    */
+    function trackGA4(eventName, params = {}) {
+      try {
+        const cleanParams = { origem: "site_webturbo", ...params };
+
+        Object.keys(cleanParams).forEach((key) => {
+          if (cleanParams[key] === undefined || cleanParams[key] === null) cleanParams[key] = "";
+          if (typeof cleanParams[key] === "string") cleanParams[key] = cleanParams[key].slice(0, 100);
+        });
+
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ event: eventName, ...cleanParams });
+
+        if (typeof gtag === "function") {
+          gtag("event", eventName, cleanParams);
+        }
+      } catch (e) {
+        console.warn("Erro ao enviar evento GA4:", eventName, e);
+      }
+    }
+
+
+    function trackGoogleAdsWhatsAppConversion() {
+      if (typeof gtag !== "function") return;
+      gtag('event', 'conversion', {
+        'send_to': 'AW-18209661462/fkbCN-lhrkcEJbEhetD'
+      });
+    }
+
+    function dispararLeadGoogleAdsConsultaViavel(params = {}) {
+      try {
+        if (typeof gtag !== "function") return;
+
+        gtag("event", "conversion", {
+          send_to: "AW-17075496858/zJmpCO2ZoM8bEJrPnc4_",
+          value: 1.0,
+          currency: "BRL",
+          event_category: "lead",
+          event_label: "consulta_cobertura_viavel",
+          ...params
+        });
+      } catch (e) {
+        console.warn("Erro ao enviar conversão Google Ads Lead:", e);
+      }
+    }
+
+    function origemEhFluxoWhatsapp(origem) {
+      const value = String(origem || "").toLowerCase();
+
+      return Boolean(
+        value.includes("whatsapp") ||
+        value.includes("modal_whats") ||
+        value.includes("botao_whats") ||
+        value.includes("botao_floating_whatsapp") ||
+        value.includes("botao_topo_whatsapp") ||
+        value.includes("floating_whatsapp")
+      );
+    }
+
+    function montarDadosRastreamentoMeta(eventId) {
+      const origem = typeof lerOrigemTrafego === "function" ? lerOrigemTrafego() : {};
+
+      return {
+        page_url: window.location.href,
+        landing_page: origem.landing_page || window.location.href,
+        referrer: document.referrer || origem.referrer || "",
+        user_agent: navigator.userAgent,
+
+        fbp: typeof getCookieValue === "function" ? getCookieValue("_fbp") : "",
+        fbc: typeof getCookieValue === "function" ? getCookieValue("_fbc") : "",
+        fbclid: origem.fbclid || "",
+
+        gclid: origem.gclid || "",
+        gbraid: origem.gbraid || "",
+        wbraid: origem.wbraid || "",
+
+        utm_source: origem.utm_source || "",
+        utm_medium: origem.utm_medium || "",
+        utm_campaign: origem.utm_campaign || "",
+        utm_content: origem.utm_content || "",
+        utm_term: origem.utm_term || "",
+
+        event_id: eventId
+      };
+    }
+
+    async function notificarConsultaViavel({ cep, fachada, cidade, uf, motivo, coords, origem }) {
+      const cepLimpo = String(cep || "").replace(/\D+/g, "");
+      const origemConsulta = origem || "";
+
+      if (cepLimpo.length !== 8) {
+        console.warn("Notificação de consulta viável ignorada: CEP inválido.", { cep, origem: origemConsulta });
+        return false;
+      }
+
+      // O frontend sempre notifica consulta viável ao backend.
+      // Fluxos de WhatsApp sinalizam ao Cloud Run para não disparar InitiateCheckout,
+      // evitando duplicidade com a lógica própria do WhatsApp/Meta/Zapier.
+      const fluxoWhatsapp = origemEhFluxoWhatsapp(origemConsulta);
+      const eventId = fluxoWhatsapp
+        ? ""
+        : `ic_${cepLimpo}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const trackingData = fluxoWhatsapp ? {} : montarDadosRastreamentoMeta(eventId);
+
+      const payload = {
+        action: "notifyConsulta",
+        cep: cepLimpo,
+        fachada: fachada || "-",
+        nomeCidade: cidade || "",
+        uf: uf || "",
+        origemConsulta,
+        siteOrigem: "mhnet",
+        skipInitiateCheckout: fluxoWhatsapp,
+        ...trackingData,
+        cobertura: {
+          motivo: motivo || "-",
+          coords: coords || ""
+        }
+      };
+
+      console.info("[cobertura] Enviando notifyConsulta", {
+        endpoint: CLOUD_RUN_URL,
+        origem: origemConsulta,
+        fluxoWhatsapp,
+        skipInitiateCheckout: payload.skipInitiateCheckout,
+        cep: cepLimpo
+      });
+
+      try {
+        const response = await fetch(CLOUD_RUN_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json().catch(() => ({}));
+        console.info("[cobertura] Resposta notifyConsulta", {
+          origem: origemConsulta,
+          status: response.status,
+          okHttp: response.ok,
+          okBody: data && data.ok,
+          motivo: data && (data.motivo || data.message || "")
+        });
+
+        if (!response.ok || (data && data.ok === false)) {
+          console.warn("NotifyConsulta retornou erro", { origem: origemConsulta, status: response.status, data });
+          return false;
+        }
+
+        return true;
+      } catch (err) {
+        console.warn("Falha ao enviar notificação de consulta viável:", { origem: origemConsulta, err });
+        return false;
+      }
+    }
+
+
+    /* ── Consulta do botão flutuante antes do WhatsApp ── */
+    const wtId = (id) => document.getElementById(id);
+
+    function wtOnlyDigits(v) { return String(v || "").replace(/\D+/g, ""); }
+
+    function wtFormatCep(v) {
+      const d = wtOnlyDigits(v).slice(0, 8);
+      return d.length > 5 ? d.slice(0, 5) + "-" + d.slice(5) : d;
+    }
+
+    function wtSetStatus(msg, type = "") {
+      const el = wtId("statusModalWhats");
+      if (!el) return;
+      el.className = "wt-status" + (type ? " " + type : "");
+      el.innerHTML = `<small>Status da consulta</small>${msg}`;
+    }
+
+    function wtAbrirModal(origemBotao = "botao_whatsapp_site") {
+      trackGA4("abriu_modal_whatsapp", { origem_botao: origemBotao });
+      const modal = wtId("modalConsultaWhats");
+      if (!modal) return;
+
+      modal.dataset.origemBotao = origemBotao;
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      setTimeout(() => wtId("cepModalWhats")?.focus(), 80);
+    }
+
+    function wtFecharModal() {
+      const modal = wtId("modalConsultaWhats");
+      if (!modal) return;
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+
+      setTimeout(() => {
+        if (typeof window.wtAvaliarStickyConsulta === "function") {
+          window.wtAvaliarStickyConsulta();
+        } else {
+          window.dispatchEvent(new Event("scroll"));
+        }
+      }, 80);
+    }
+
+    function wtMontarWhatsapp(cep, numero, fachada, coords) {
+      const msg =
+        `Olá! Consultei a cobertura no site da MhNet e quero contratar.\n\n` +
+        `CEP: ${cep}\nNúmero: ${numero}\nEndereço: ${fachada}` +
+        (coords ? `\nCoords: ${coords}` : "");
+      return `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function wtIsViavel(data) {
+      return data && data.ok === true && data.viavel === true;
+    }
+
+    async function wtFetchTimeout(url, options = {}, timeout = 14000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    async function wtBuscarCep(cep) {
+      const r = await wtFetchTimeout(`https://viacep.com.br/ws/${cep}/json/`, {}, 9000);
+      const data = await r.json();
+      if (data.erro) return null;
+      return data;
+    }
+
+
+    const ESTADOS_BR_SIGLAS = {
+      "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM", "Bahia": "BA", "Ceará": "CE",
+      "Distrito Federal": "DF", "Espírito Santo": "ES", "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT",
+      "Mato Grosso do Sul": "MS", "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR",
+      "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN",
+      "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC", "São Paulo": "SP",
+      "Sergipe": "SE", "Tocantins": "TO"
+    };
+
+    function parseEnderecoNominatim(data) {
+      const address = data && data.address ? data.address : {};
+      const logradouro = address.road || address.pedestrian || address.footway || address.residential || address.path || address.street || "";
+      const numero = address.house_number || "";
+      const bairro = address.suburb || address.neighbourhood || address.quarter || address.city_district || address.hamlet || address.village_suburb || "";
+      const cidade = address.city || address.town || address.village || address.municipality || address.county || "";
+      let uf = address.state_code || "";
+      if (!uf && address.state) uf = ESTADOS_BR_SIGLAS[address.state] || "";
+      const cep = String(address.postcode || "").replace(/\D+/g, "").slice(0, 8);
+      return { logradouro, numero, bairro, cidade, uf: String(uf || "").toUpperCase().slice(0, 2), cep };
+    }
+
+    async function reverseGeocodeGenerico(lat, lng) {
+      const url = new URL("https://nominatim.openstreetmap.org/reverse");
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("lat", lat);
+      url.searchParams.set("lon", lng);
+      url.searchParams.set("addressdetails", "1");
+      url.searchParams.set("accept-language", "pt-BR");
+      const response = await fetch(url.toString(), { method: "GET", headers: { "Accept": "application/json" } });
+      if (!response.ok) throw new Error("reverse_geocode_failed");
+      return await response.json().catch(() => ({}));
+    }
+
+    async function buscarCepViaEnderecoGenerico(uf, cidade, logradouro, bairro) {
+      const ufLimpo = String(uf || "").trim().toUpperCase().slice(0, 2);
+      const cidadeLimpa = String(cidade || "").trim();
+      const logradouroLimpo = String(logradouro || "").trim();
+      const bairroLimpo = String(bairro || "").trim().toLowerCase();
+      if (!ufLimpo || !cidadeLimpa || !logradouroLimpo || logradouroLimpo.length < 3) return "";
+      try {
+        const url = `https://viacep.com.br/ws/${encodeURIComponent(ufLimpo)}/${encodeURIComponent(cidadeLimpa)}/${encodeURIComponent(logradouroLimpo)}/json/`;
+        const response = await fetch(url, { method: "GET", headers: { "Accept": "application/json" } });
+        if (!response.ok) return "";
+        const data = await response.json().catch(() => []);
+        if (!Array.isArray(data) || !data.length) return "";
+        const melhor = data.find(item => bairroLimpo && String(item.bairro || "").trim().toLowerCase() === bairroLimpo) || data[0];
+        return String(melhor.cep || "").replace(/\D+/g, "").slice(0, 8);
+      } catch (error) {
+        console.warn("Falha ao buscar CEP por endereço:", error);
+        return "";
+      }
+    }
+
+    function setLocationFields(prefix, lat, lng, address) {
+      const latFmt = formatLocationCoord(lat);
+      const lngFmt = formatLocationCoord(lng);
+      const coords = latFmt && lngFmt ? `${latFmt},${lngFmt}` : "";
+      const map = {
+        consulta: ["consultaLatitudeFixa", "consultaLongitudeFixa", "consultaCoordenadasFixas", "consultaLinkLocalizacaoFixa", "consultaEnderecoDetectadoLocalizacao"],
+        wt: ["wtLatitudeFixaWhats", "wtLongitudeFixaWhats", "wtCoordenadasFixasWhats", "wtLinkLocalizacaoFixaWhats", "wtEnderecoDetectadoLocalizacaoWhats"]
+      };
+      const ids = map[prefix];
+      if (!ids) return;
+      if (wtId(ids[0])) wtId(ids[0]).value = latFmt;
+      if (wtId(ids[1])) wtId(ids[1]).value = lngFmt;
+      if (wtId(ids[2])) wtId(ids[2]).value = coords;
+      if (wtId(ids[3])) wtId(ids[3]).value = coords ? `https://www.google.com/maps?q=${coords}` : "";
+      if (address && wtId(ids[4])) wtId(ids[4]).value = address;
+    }
+
+    function setLocationStatus(prefix, msg, type = "") {
+      const id = prefix === "wt" ? "wtLocationStatusWhats" : "consultaLocationStatus";
+      const el = wtId(id);
+      if (!el) return;
+      el.className = "modal-location-status" + (type ? " " + type : "");
+      el.textContent = msg;
+    }
+
+    let wtSemCepMode = false;
+    let wtLocationMap = null;
+    let wtLocationMarker = null;
+    let wtLocationMapReady = false;
+    let consultaSemCepMode = false;
+    let consultaLocationMap = null;
+    let consultaLocationMarker = null;
+    let consultaLocationMapReady = false;
+
+    function initLocationMap(prefix) {
+      if (typeof L === "undefined") return;
+      const isWt = prefix === "wt";
+      const mapId = isWt ? "wtLocationMapWhats" : "consultaLocationMap";
+      if (!wtId(mapId)) return;
+
+      if (isWt && !wtLocationMapReady) {
+        wtLocationMap = L.map(mapId, { zoomControl: true, attributionControl: true }).setView([-14.2350, -51.9253], 4);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(wtLocationMap);
+        wtLocationMap.on("click", e => handleGenericLocationSelected("wt", e.latlng.lat, e.latlng.lng, false));
+        wtLocationMapReady = true;
+      }
+
+      if (!isWt && !consultaLocationMapReady) {
+        consultaLocationMap = L.map(mapId, { zoomControl: true, attributionControl: true }).setView([-14.2350, -51.9253], 4);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "&copy; OpenStreetMap contributors" }).addTo(consultaLocationMap);
+        consultaLocationMap.on("click", e => handleGenericLocationSelected("consulta", e.latlng.lat, e.latlng.lng, false));
+        consultaLocationMapReady = true;
+      }
+
+      setTimeout(() => {
+        if (isWt && wtLocationMap) wtLocationMap.invalidateSize();
+        if (!isWt && consultaLocationMap) consultaLocationMap.invalidateSize();
+      }, 220);
+    }
+
+    function updateGenericMarker(prefix, lat, lng, shouldZoom) {
+      initLocationMap(prefix);
+      const isWt = prefix === "wt";
+      const map = isWt ? wtLocationMap : consultaLocationMap;
+      if (!map) return;
+      const position = [lat, lng];
+      if (isWt) {
+        if (!wtLocationMarker) {
+          wtLocationMarker = L.marker(position, { draggable: true }).addTo(map);
+          wtLocationMarker.on("dragend", () => {
+            const pos = wtLocationMarker.getLatLng();
+            handleGenericLocationSelected("wt", pos.lat, pos.lng, false);
+          });
+        } else wtLocationMarker.setLatLng(position);
+      } else {
+        if (!consultaLocationMarker) {
+          consultaLocationMarker = L.marker(position, { draggable: true }).addTo(map);
+          consultaLocationMarker.on("dragend", () => {
+            const pos = consultaLocationMarker.getLatLng();
+            handleGenericLocationSelected("consulta", pos.lat, pos.lng, false);
+          });
+        } else consultaLocationMarker.setLatLng(position);
+      }
+      map.setView(position, shouldZoom ? 17 : Math.max(map.getZoom(), 16));
+    }
+
+    async function preencherEnderecoPrefixo(prefix, data) {
+      const p = parseEnderecoNominatim(data);
+      if (!p) return;
+      const ids = prefix === "wt"
+        ? { cep: "cepModalWhats", numero: "numeroModalWhats", logradouro: "wtLogradouroWhats", bairro: "wtBairroWhats", cidade: "wtCidadeWhats", uf: "wtUfWhats", endereco: "enderecoModalWhats", extra: "wtEnderecoCompletoWhats" }
+        : { cep: "cep", numero: "numero", logradouro: "consultaLogradouro", bairro: "consultaBairro", cidade: "consultaCidade", uf: "consultaUf", endereco: "logradouro", extra: "consultaEnderecoCompleto" };
+
+      if (wtId(ids.logradouro) && p.logradouro) wtId(ids.logradouro).value = p.logradouro;
+      if (wtId(ids.numero) && p.numero && !wtId(ids.numero).value.trim()) wtId(ids.numero).value = p.numero;
+      if (wtId(ids.bairro) && p.bairro) wtId(ids.bairro).value = p.bairro;
+      if (wtId(ids.cidade) && p.cidade) wtId(ids.cidade).value = p.cidade;
+      if (wtId(ids.uf) && p.uf) wtId(ids.uf).value = p.uf;
+
+      let cep = p.cep;
+      if (cep.length !== 8) cep = await buscarCepViaEnderecoGenerico(p.uf, p.cidade, p.logradouro, p.bairro);
+      if (cep.length === 8 && wtId(ids.cep)) wtId(ids.cep).value = wtFormatCep(cep);
+
+      // Expande campos de endereço APÓS a localização ser capturada
+      if (wtId(ids.extra)) wtId(ids.extra).classList.add("show");
+      const numero = wtId(ids.numero) ? wtId(ids.numero).value.trim() : "";
+      const cidadeUf = [p.cidade, p.uf].filter(Boolean).join(" - ");
+      const fachada = [p.logradouro, numero, p.bairro, cidadeUf].filter(Boolean).join(", ");
+      if (prefix === "wt" && wtId(ids.endereco)) wtId(ids.endereco).value = fachada || (data.display_name || "");
+      if (prefix === "consulta" && typeof setAddress === "function") setAddress(fachada || data.display_name || "Complete o endereço para consultar a cobertura.");
+    }
+
+
+
+    function wtGuideGet(id) {
+      return wtId(id) || document.getElementById(id);
+    }
+
+    function wtGuideValue(id) {
+      const el = wtGuideGet(id);
+      return el ? String(el.value || "").trim() : "";
+    }
+
+    function wtGuideScrollTo(target, message, statusFn) {
+      const el = typeof target === "string" ? wtGuideGet(target) : target;
+      if (!el) return false;
+
+      if (typeof statusFn === "function" && message) {
+        statusFn(message, "ok");
+      }
+
+      document.querySelectorAll(".wt-guide-focus").forEach(item => item.classList.remove("wt-guide-focus"));
+      el.classList.add("wt-guide-focus");
+
+      setTimeout(() => {
+        try {
+          el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+        } catch (_) {
+          el.scrollIntoView();
+        }
+
+        setTimeout(() => {
+          if (typeof el.focus === "function" && !el.readOnly && !el.disabled && el.tagName !== "BUTTON") {
+            try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); }
+          }
+        }, 350);
+      }, 180);
+
+      clearTimeout(window.__wtGuideFocusTimer);
+      window.__wtGuideFocusTimer = setTimeout(() => {
+        el.classList.remove("wt-guide-focus");
+      }, 7000);
+
+      return true;
+    }
+
+    function guiarDepoisDaLocalizacao(prefix) {
+      if (prefix === "modal") {
+        const status = typeof setModalLocationStatus === "function" ? setModalLocationStatus : null;
+        if (!wtGuideValue("mNumero")) return wtGuideScrollTo("mNumero", "Localização encontrada. Agora informe o número da casa para continuar.", status);
+        if (!wtGuideValue("mCidade")) return wtGuideScrollTo("mCidade", "Confira a cidade. Se não preencheu automático, digite aqui.", status);
+        if (!wtGuideValue("mUf")) return wtGuideScrollTo("mUf", "Informe a UF com 2 letras, exemplo: RS, SC, PR, SP ou MS.", status);
+        if (!wtGuideValue("mLogradouro")) return wtGuideScrollTo("mLogradouro", "Confira a rua/avenida. Se não preencheu automático, digite aqui.", status);
+        const btn = document.querySelector("#etapa1 .btn-modal-next");
+        if (btn) return wtGuideScrollTo(btn, "Dados prontos. Clique em Consultar cobertura e continuar.", status);
+        return false;
+      }
+
+      if (prefix === "consulta") {
+        const status = (msg, type) => setLocationStatus("consulta", msg, type);
+        if (!wtGuideValue("numero")) return wtGuideScrollTo("numero", "Localização encontrada. Agora informe o número da casa para consultar a cobertura.", status);
+        if (!wtGuideValue("consultaCidade")) return wtGuideScrollTo("consultaCidade", "Confira a cidade. Se não preencheu automático, digite aqui.", status);
+        if (!wtGuideValue("consultaUf")) return wtGuideScrollTo("consultaUf", "Informe a UF com 2 letras, exemplo: RS, SC, PR, SP ou MS.", status);
+        if (!wtGuideValue("consultaLogradouro")) return wtGuideScrollTo("consultaLogradouro", "Confira a rua/avenida. Se não preencheu automático, digite aqui.", status);
+        return wtGuideScrollTo("btnConsultar", "Dados prontos. Clique em Consultar cobertura para verificar a disponibilidade.", status);
+      }
+
+      if (prefix === "wt") {
+        const status = (msg, type) => setLocationStatus("wt", msg, type);
+        if (!wtGuideValue("numeroModalWhats")) return wtGuideScrollTo("numeroModalWhats", "Localização encontrada. Agora informe o número da casa para consultar a cobertura.", status);
+        if (!wtGuideValue("wtCidadeWhats")) return wtGuideScrollTo("wtCidadeWhats", "Confira a cidade. Se não preencheu automático, digite aqui.", status);
+        if (!wtGuideValue("wtUfWhats")) return wtGuideScrollTo("wtUfWhats", "Informe a UF com 2 letras, exemplo: RS, SC, PR, SP ou MS.", status);
+        if (!wtGuideValue("wtLogradouroWhats")) return wtGuideScrollTo("wtLogradouroWhats", "Confira a rua/avenida. Se não preencheu automático, digite aqui.", status);
+        return wtGuideScrollTo("consultarModalWhats", "Dados prontos. Clique em Consultar cobertura para continuar.", status);
+      }
+
+      return false;
+    }
+
+
+    function wtLocationBoxId(prefix) {
+      if (prefix === "modal") return "modalLocationBox";
+      if (prefix === "wt") return "wtLocationBoxWhats";
+      return "consultaLocationBox";
+    }
+
+    function wtLocationButtonId(prefix) {
+      if (prefix === "modal") return "btnUsarLocalizacaoModal";
+      if (prefix === "wt") return "btnUsarLocalizacaoWhats";
+      return "btnUsarLocalizacaoConsulta";
+    }
+
+    function expandirMapaLocalizacao(prefix) {
+      const box = wtGuideGet(wtLocationBoxId(prefix));
+      if (box) box.classList.remove("location-collapsed");
+      const btn = wtGuideGet(wtLocationButtonId(prefix));
+      if (btn && !btn.disabled) btn.textContent = "📍 Capturar minha localização";
+      setTimeout(() => {
+        if (prefix === "modal" && modalLocationMap) modalLocationMap.invalidateSize();
+        if (prefix === "wt" && wtLocationMap) wtLocationMap.invalidateSize();
+        if (prefix === "consulta" && consultaLocationMap) consultaLocationMap.invalidateSize();
+      }, 160);
+    }
+
+    function recolherMapaLocalizacao(prefix) {
+      const box = wtGuideGet(wtLocationBoxId(prefix));
+      if (box) box.classList.add("location-collapsed");
+      const btn = wtGuideGet(wtLocationButtonId(prefix));
+      if (btn && !btn.disabled) btn.textContent = "Alterar localização";
+    }
+
+    async function handleGenericLocationSelected(prefix, lat, lng, shouldZoom) {
+      setLocationFields(prefix, lat, lng, "");
+      updateGenericMarker(prefix, lat, lng, shouldZoom !== false);
+      setLocationStatus(prefix, "Coordenadas salvas. Buscando endereço aproximado...", "ok");
+      try {
+        const data = await reverseGeocodeGenerico(lat, lng);
+        const endereco = data && data.display_name ? data.display_name : "Endereço aproximado não localizado.";
+        setLocationFields(prefix, lat, lng, endereco);
+        await preencherEnderecoPrefixo(prefix, data);
+        setLocationStatus(prefix, "Localização salva. Agora complete o próximo campo destacado para consultar a cobertura.", "ok");
+        recolherMapaLocalizacao(prefix);
+        guiarDepoisDaLocalizacao(prefix);
+      } catch (error) {
+        setLocationStatus(prefix, "Coordenadas salvas. Complete os campos necessários para consultar a cobertura.", "bad");
+        recolherMapaLocalizacao(prefix);
+        guiarDepoisDaLocalizacao(prefix);
+      }
+    }
+
+    function usarLocalizacaoGenerica(prefix) {
+      expandirMapaLocalizacao(prefix);
+      const btnId = prefix === "wt" ? "btnUsarLocalizacaoWhats" : "btnUsarLocalizacaoConsulta";
+      const btn = wtId(btnId);
+      if (!navigator.geolocation) {
+        setLocationStatus(prefix, "Seu navegador não suporta geolocalização. Toque no mapa para fixar o ponto.", "bad");
+        return;
+      }
+      if (btn) { btn.disabled = true; btn.textContent = "Capturando..."; }
+      setLocationStatus(prefix, "Solicitando permissão de localização do navegador...", "ok");
+      navigator.geolocation.getCurrentPosition(
+        async position => {
+          const accuracy = Math.round(position.coords.accuracy || 0);
+          if (accuracy && accuracy > 150) setLocationStatus(prefix, `Localização capturada com baixa precisão: aproximadamente ${accuracy} metros. Confira o ponto no mapa.`, "bad");
+          await handleGenericLocationSelected(prefix, position.coords.latitude, position.coords.longitude, true);
+          if (btn) {
+            btn.disabled = false;
+            const box = wtGuideGet(wtLocationBoxId(prefix));
+            btn.textContent = box && box.classList.contains("location-collapsed") ? "Alterar localização" : "📍 Capturar minha localização";
+          }
+        },
+        error => {
+          let message = "Não foi possível capturar sua localização. Toque no mapa para fixar manualmente.";
+          if (error.code === error.PERMISSION_DENIED) message = "Permissão de localização negada. Toque no mapa para fixar manualmente.";
+          if (error.code === error.POSITION_UNAVAILABLE) message = "Localização indisponível no momento. Toque no mapa para fixar manualmente.";
+          if (error.code === error.TIMEOUT) message = "A localização demorou demais. Tente novamente ou toque no mapa.";
+          setLocationStatus(prefix, message, "bad");
+          if (btn) { btn.disabled = false; btn.textContent = "Usar minha localização atual"; }
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+    }
+
+    function ativarSemCepWhats() {
+      wtSemCepMode = true;
+      // Mostra APENAS o mapa/GPS — campos de endereço aparecem após localização capturada
+      wtId("wtLocationBoxWhats")?.classList.add("show");
+      expandirMapaLocalizacao("wt");
+      initLocationMap("wt");
+      wtSetStatus("Use sua localização atual ou toque no mapa para marcar sua casa. Os campos de endereço serão preenchidos automaticamente.");
+      setLocationStatus("wt", "Toque no mapa ou use o botão de localização para continuar.", "ok");
+    }
+
+    function ativarSemCepConsulta() {
+      consultaSemCepMode = true;
+      // Mostra APENAS o mapa/GPS — campos de endereço aparecem após localização capturada
+      wtId("consultaLocationBox")?.classList.add("show");
+      expandirMapaLocalizacao("consulta");
+      initLocationMap("consulta");
+      setStatus("Use sua localização atual ou toque no mapa para marcar sua casa. Os campos de endereço serão preenchidos automaticamente.");
+      setLocationStatus("consulta", "Toque no mapa ou use o botão de localização para continuar.", "ok");
+    }
+
+    async function wtConsultarCobertura() {
+      const cep = wtOnlyDigits(wtId("cepModalWhats")?.value);
+      const numero = wtId("numeroModalWhats")?.value.trim() || "";
+      const btn = wtId("consultarModalWhats");
+      const extraBox = wtId("wtEnderecoCompletoWhats");
+      const extraVisivel = extraBox && extraBox.classList.contains("show");
+      const origemConsulta = wtId("modalConsultaWhats")?.dataset.origemBotao || "modal_whatsapp";
+
+      trackGA4("clicou_consultar_cobertura", {
+        origem_consulta: origemConsulta,
+        etapa_consulta: extraVisivel ? "consulta_cobertura" : "busca_endereco",
+        cep_preenchido: cep.length === 8 ? "sim" : "nao",
+        numero_preenchido: numero ? "sim" : "nao"
+      });
+
+      const coordsFixasWhats = wtId("wtCoordenadasFixasWhats")?.value.trim() || "";
+      const usandoLocalizacaoSemCepWhats = wtSemCepMode && coordsFixasWhats;
+
+      if (cep.length !== 8 && !usandoLocalizacaoSemCepWhats) {
+        wtSetStatus("Informe um CEP válido ou clique em Não sei meu CEP para enviar sua localização.", "bad");
+        return;
+      }
+
+      if (!numero) {
+        wtSetStatus("Informe o número do imóvel.", "bad");
+        return;
+      }
+
+      if (!extraVisivel) {
+        if (usandoLocalizacaoSemCepWhats) {
+          // Localização já capturada mas campos ainda não expandidos → expande e continua
+          if (extraBox) extraBox.classList.add("show");
+          wtSetStatus("Localização recebida. Confira os dados do endereço e clique novamente para consultar cobertura.");
+          return;
+        }
+
+        wtSetStatus("Localizando endereço...");
+        if (btn) btn.disabled = true;
+        showGlobalLoading("Buscando endereço pelo CEP...");
+
+        try {
+          const end = await wtBuscarCep(cep);
+
+          if (!end || !end.localidade || !end.uf) {
+            if (extraBox) extraBox.classList.add("show");
+            wtSetStatus("Não conseguimos localizar esse CEP automaticamente. Complete o endereço para consultar.", "bad");
+            return;
+          }
+
+          wtId("wtLogradouroWhats").value = end.logradouro || "";
+          wtId("wtBairroWhats").value = end.bairro || "";
+          wtId("wtCidadeWhats").value = end.localidade || "";
+          wtId("wtUfWhats").value = end.uf || "";
+
+          const fachada = [
+            end.logradouro || "",
+            numero,
+            end.bairro || "",
+            `${end.localidade} - ${end.uf}`
+          ].filter(Boolean).join(", ");
+
+          wtId("enderecoModalWhats").value = fachada;
+
+          if (extraBox) extraBox.classList.add("show");
+
+          if (!end.logradouro || !end.bairro) {
+            wtSetStatus("Esse CEP parece ser geral. Complete rua e bairro para consultar a cobertura.", "bad");
+            wtId(!end.logradouro ? "wtLogradouroWhats" : "wtBairroWhats")?.focus();
+          } else {
+            wtSetStatus("Endereço localizado. Confira os dados e clique novamente para consultar cobertura.");
+          }
+
+          if (btn) btn.textContent = "Consultar cobertura";
+          return;
+
+        } catch (e) {
+          if (extraBox) extraBox.classList.add("show");
+          wtSetStatus("Não conseguimos buscar o CEP automaticamente. Complete o endereço para consultar.", "bad");
+          return;
+
+        } finally {
+          if (btn) btn.disabled = false;
+          hideGlobalLoading();
+        }
+      }
+
+      const logradouro = wtId("wtLogradouroWhats")?.value.trim() || "";
+      const bairro = wtId("wtBairroWhats")?.value.trim() || "";
+      const cidade = wtId("wtCidadeWhats")?.value.trim() || "";
+      const uf = (wtId("wtUfWhats")?.value.trim() || "").toUpperCase();
+
+      if (!usandoLocalizacaoSemCepWhats && !logradouro) {
+        wtSetStatus("Informe a rua ou avenida para consultar a cobertura.", "bad");
+        wtId("wtLogradouroWhats")?.focus();
+        return;
+      }
+
+      if (!usandoLocalizacaoSemCepWhats && !bairro) {
+        wtSetStatus("Informe o bairro para consultar a cobertura.", "bad");
+        wtId("wtBairroWhats")?.focus();
+        return;
+      }
+
+      if (!cidade) {
+        wtSetStatus("Informe a cidade para consultar a cobertura.", "bad");
+        wtId("wtCidadeWhats")?.focus();
+        return;
+      }
+
+      if (!uf || uf.length !== 2) {
+        wtSetStatus("Informe a UF para consultar a cobertura.", "bad");
+        wtId("wtUfWhats")?.focus();
+        return;
+      }
+
+      wtId("wtUfWhats").value = uf;
+
+      const fachada = [
+        logradouro || "Localização enviada pelo cliente",
+        numero,
+        bairro,
+        `${cidade} - ${uf}`
+      ].filter(Boolean).join(", ");
+
+      wtId("enderecoModalWhats").value = fachada;
+
+      wtSetStatus("Verificando cobertura...");
+      if (btn) btn.disabled = true;
+      showGlobalLoading("Consultando cobertura antes de abrir o atendimento...");
+
+      try {
+        const payload = {
+          cep,
+          numero,
+          logradouro,
+          bairro,
+          cidade,
+          uf,
+          fachada,
+          radius: FIXED_RADIUS,
+          origem: origemConsulta,
+          semCep: wtSemCepMode === true,
+          sem_cep: wtSemCepMode === true,
+          coords: coordsFixasWhats,
+          coordenadas: coordsFixasWhats,
+          coordenadasFixas: coordsFixasWhats,
+          latitude: wtId("wtLatitudeFixaWhats")?.value || "",
+          longitude: wtId("wtLongitudeFixaWhats")?.value || "",
+          latitudeFixa: wtId("wtLatitudeFixaWhats")?.value || "",
+          longitudeFixa: wtId("wtLongitudeFixaWhats")?.value || "",
+          linkLocalizacao: wtId("wtLinkLocalizacaoFixaWhats")?.value || "",
+          enderecoLocalizacaoFixa: wtId("wtEnderecoDetectadoLocalizacaoWhats")?.value || ""
+        };
+
+        const data = await wtConsultarCoberturaEndpointComFallback(payload);
+        const coords = data && data.coords ? data.coords : "";
+
+        if (wtIsViavel(data)) {
+          coberturaPaginaData = {
+            cep: wtFormatCep(cep),
+            numero,
+            logradouro,
+            bairro,
+            cidade,
+            uf,
+            complemento: "",
+            enderecoCompleto: fachada,
+            fachada,
+            cobertura: data
+          };
+
+          trackGA4("consulta_cobertura_viavel", {
+            origem_consulta: origemConsulta,
+            cidade,
+            uf,
+            cep
+          });
+
+          dispararLeadGoogleAdsConsultaViavel({
+            origem_consulta: origemConsulta,
+            cidade,
+            uf,
+            cep
+          });
+
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: origemConsulta, cep, cidade, uf, viavel: true });
+          notificarConsultaViavel({
+            cep,
+            fachada,
+            cidade,
+            uf,
+            motivo: data && data.motivo ? data.motivo : "-",
+            coords,
+            origem: origemConsulta
+          });
+
+          const coordsParaWhats = coords || coordsFixasWhats;
+          const linkWhats = wtMontarWhatsapp(cep ? wtFormatCep(cep) : "Não informado", numero, fachada, coordsParaWhats);
+
+          wtSetStatus(`
+            <strong>Cobertura disponível para este endereço.</strong>
+            <div class="wt-modal-choice">
+              <p>Você pode continuar a contratação aqui pelo site ou falar com nossa equipe pelo WhatsApp.</p>
+              <button type="button" id="btnContinuarSiteModalWhats" class="wt-choice-primary">Continuar por aqui</button>
+              <a id="btnContinuarWhatsModal" class="wt-choice-secondary" href="${linkWhats}" target="_blank" rel="noopener">Falar no WhatsApp</a>
+            </div>
+          `, "ok");
+
+          const btnSite = wtId("btnContinuarSiteModalWhats");
+          const btnWhats = wtId("btnContinuarWhatsModal");
+
+          btnSite?.addEventListener("click", function() {
+            trackGA4("continuar_contratacao_site", {
+              origem_botao: origemConsulta,
+              cidade,
+              uf,
+              cep
+            });
+
+            wtFecharModal();
+            setTimeout(() => {
+              if (typeof abrirModalCobertura === "function") abrirModalCobertura();
+              else if (typeof abrirModal === "function") abrirModal("");
+            }, 160);
+          });
+
+          btnWhats?.addEventListener("click", function() {
+            trackGoogleAdsWhatsAppConversion();
+            trackGA4("clique_whatsapp", {
+              origem_botao: origemConsulta + "_cobertura_viavel",
+              cidade,
+              uf,
+              cep
+            });
+          });
+
+        } else {
+          trackGA4("consulta_cobertura_inviavel", {
+            origem_consulta: origemConsulta,
+            cidade,
+            uf,
+            cep,
+            motivo: data && data.motivo ? data.motivo : "sem_viabilidade"
+          });
+
+          wtSetStatus("No momento ainda não identificamos cobertura disponível para esse endereço. Fale com nossa equipe para verificarmos outras possibilidades.", "bad");
+        }
+
+      } catch (e) {
+        trackGA4("erro_consulta_cobertura", {
+          origem_consulta: origemConsulta,
+          erro: e && e.message ? e.message : "erro_consulta"
+        });
+
+        wtSetStatus("Não foi possível consultar agora. Tente novamente em instantes.", "bad");
+
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Consultar cobertura";
+        }
+
+        hideGlobalLoading();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+      wtId("botaoWhats")?.addEventListener("click", function() {
+        trackGoogleAdsWhatsAppConversion();
+        trackGA4("clique_whatsapp", {
+          origem_botao: "botao_floating_whatsapp_site"
+        });
+        window.location.href = `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent("Olá! Quero falar sobre os planos de internet MhNet com a WebTurbo.")}`;
+      });
+      wtId("botaoWhatsTopo")?.addEventListener("click", function() {
+        trackGoogleAdsWhatsAppConversion();
+        trackGA4("clique_whatsapp", {
+          origem_botao: "botao_topo_whatsapp_site"
+        });
+        window.location.href = `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent("Olá! Quero falar sobre os planos de internet MhNet com a WebTurbo.")}`;
+      });
+      wtId("fecharModalWhats")?.addEventListener("click", wtFecharModal);
+      wtId("modalConsultaWhats")?.addEventListener("click", function(e) {
+        if (e.target && e.target.id === "modalConsultaWhats") wtFecharModal();
+      });
+      wtId("cepModalWhats")?.addEventListener("input", function(e) {
+        e.target.value = wtFormatCep(e.target.value);
+        wtSemCepMode = false;
+        wtId("wtEnderecoCompletoWhats")?.classList.remove("show");
+        wtId("wtLocationBoxWhats")?.classList.remove("show");
+        wtId("enderecoModalWhats").value = "";
+        ["wtLogradouroWhats", "wtBairroWhats", "wtCidadeWhats", "wtUfWhats"].forEach((id) => {
+          const field = wtId(id);
+          if (field) field.value = "";
+        });
+        wtSetStatus("Informe o CEP e número para continuar.");
+      });
+      wtId("numeroModalWhats")?.addEventListener("input", function() {
+        wtId("wtEnderecoCompletoWhats")?.classList.remove("show");
+        wtId("enderecoModalWhats").value = "";
+        wtSetStatus("Informe o CEP e número para continuar.");
+      });
+      wtId("btnNaoSeiCepWhats")?.addEventListener("click", ativarSemCepWhats);
+      wtId("btnUsarLocalizacaoWhats")?.addEventListener("click", () => usarLocalizacaoGenerica("wt"));
+      wtId("consultarModalWhats")?.addEventListener("click", wtConsultarCobertura);
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") wtFecharModal();
+      });
+    });
 
     const $ = (id) => document.getElementById(id);
+
+    let globalLoadingCount = 0;
+
+    function showGlobalLoading(message = "Aguarde, estamos processando sua solicitação.", title = "Carregando...") {
+      globalLoadingCount++;
+
+      const overlay = document.getElementById("globalLoading");
+      const titleEl = document.getElementById("globalLoadingTitle");
+      const textEl = document.getElementById("globalLoadingText");
+
+      if (titleEl) titleEl.textContent = title;
+      if (textEl) textEl.textContent = message;
+
+      if (overlay) {
+        overlay.classList.add("show");
+        overlay.setAttribute("aria-hidden", "false");
+      }
+
+      document.body.classList.add("global-loading-active");
+    }
+
+    function hideGlobalLoading() {
+      globalLoadingCount = Math.max(0, globalLoadingCount - 1);
+      if (globalLoadingCount > 0) return;
+
+      const overlay = document.getElementById("globalLoading");
+      if (overlay) {
+        overlay.classList.remove("show");
+        overlay.setAttribute("aria-hidden", "true");
+      }
+
+      document.body.classList.remove("global-loading-active");
+    }
+
 
     const formatCep = (value) => {
       const digits = String(value || "").replace(/\D/g, "").slice(0, 8);
@@ -2509,13 +4378,9 @@
 
     function setLoading(loading) {
       const btn = $("btnConsultar");
-      if (loading) {
-        btn.innerHTML = '<div class="spinner"></div> Consultando...';
-        btn.disabled = true;
-      } else {
-        btn.innerHTML = 'Consultar cobertura';
-        btn.disabled = false;
-      }
+      if (!btn) return;
+      btn.innerHTML = "Consultar cobertura";
+      btn.disabled = !!loading;
     }
 
     function clearForm() {
@@ -2555,24 +4420,172 @@
       } catch { return null; }
     }
 
+    const COVERAGE_SESSION_KEY = "webturbo_site_coverage_v1";
+
+    function normalizarPayloadCoberturaSite(payload) {
+      return {
+        postalCode: onlyDigits(payload && payload.cep),
+        state: String(payload && payload.uf || "").trim().toUpperCase(),
+        city: String(payload && payload.cidade || "").trim(),
+        district: String(payload && payload.bairro || "").trim(),
+        street: String(payload && payload.logradouro || "").trim(),
+        number: String(payload && payload.numero || "").trim(),
+        complement: String(payload && payload.complemento || "").trim()
+      };
+    }
+
+    function chaveEnderecoCobertura(address) {
+      return [address.postalCode, address.state, address.city, address.district, address.street, address.number, address.complement]
+        .map(value => String(value || "").trim().toUpperCase())
+        .join("|");
+    }
+
+    function lerCoberturaDaSessao(key) {
+      try {
+        const cached = JSON.parse(sessionStorage.getItem(COVERAGE_SESSION_KEY) || "null");
+        return cached && cached.addressKey === key ? cached.result : null;
+      } catch { return null; }
+    }
+
+    function salvarCoberturaNaSessao(key, result) {
+      try {
+        sessionStorage.setItem(COVERAGE_SESSION_KEY, JSON.stringify({
+          addressKey: key,
+          operatorCode: result && result.operator ? result.operator.code : null,
+          state: result && result.normalizedAddress ? result.normalizedAddress.state : "",
+          normalizedAddress: result ? result.normalizedAddress : null,
+          coverage: result ? result.coverage : null,
+          selectedPlan: document.getElementById("mPlano")?.value || "",
+          result
+        }));
+      } catch {}
+    }
+
+    function adaptarResolucaoCobertura(data) {
+      return {
+        ...data,
+        viavel: data && data.viable === true,
+        motivo: data && data.coverage ? data.coverage.reason || "" : "",
+        coords: data && data.coverage ? data.coverage.coords || "" : ""
+      };
+    }
+
+    function escapeCoberturaHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function formatarPrecoPlano(value) {
+      return Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function aplicarPlanosDaCobertura(resolution) {
+      if (!resolution || resolution.viavel !== true || !resolution.operator || !Array.isArray(resolution.plans)) return;
+      const operatorName = resolution.operator.name || resolution.operator.code;
+      const title = document.getElementById("titulo-planos");
+      if (title) title.textContent = `Planos ${operatorName} Internet`;
+
+      const track = document.getElementById("plansTrack");
+      if (track) {
+        track.innerHTML = resolution.plans.map((plan, index) => `
+          <article class="plan${index === 0 ? " featured" : ""}">
+            <div class="plan-badge">${index === 0 ? "⭐ Oferta em destaque" : "Internet fibra"}</div>
+            <h3>${escapeCoberturaHtml(plan.name)}</h3>
+            <div class="subtitle">${escapeCoberturaHtml(plan.description)}</div>
+            <div class="price"><span class="value">R$ ${formatarPrecoPlano(plan.price)}</span><small>/mês</small></div>
+            <div class="plan-info"><span class="plan-tag">Instalação grátis</span><span class="plan-tag">Wi-Fi incluso</span></div>
+            <ul><li>Internet fibra óptica ${escapeCoberturaHtml(operatorName)}</li><li>Oferta disponível no endereço consultado</li></ul>
+            <button class="btn-contratar-plano" onclick="abrirModal('${escapeCoberturaHtml(plan.code)}')">Contratar agora</button>
+          </article>`).join("");
+      }
+
+      const select = document.getElementById("mPlano");
+      if (select) {
+        const previous = select.value;
+        select.innerHTML = '<option value="">Selecione o plano...</option>' + resolution.plans.map(plan =>
+          `<option value="${escapeCoberturaHtml(plan.code)}">${escapeCoberturaHtml(plan.name)} — R$ ${formatarPrecoPlano(plan.price)}/mês</option>`
+        ).join("");
+        select.value = resolution.plans.some(plan => plan.code === previous) ? previous : "";
+      }
+
+      resolution.plans.forEach(plan => {
+        PLAN_LABELS[plan.code] = `${plan.name} — R$ ${formatarPrecoPlano(plan.price)}/mês`;
+        PLAN_VALUES[plan.code] = Number(plan.price || 0);
+      });
+    }
+
+    async function consultarCoberturaSemCepMhnet(payload) {
+      const response = await wtFetchTimeout(MHNET_LEGACY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }, TIMEOUT_MS);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || data.motivo || "Erro ao consultar cobertura.");
+      if (data && data.ok === true && data.viavel === true) {
+        const resolution = adaptarResolucaoCobertura({
+          ok: true,
+          viable: true,
+          operator: { code: "MHNET", name: "MhNet" },
+          normalizedAddress: normalizarPayloadCoberturaSite(payload),
+          coverage: { status: "VIAVEL", reason: data.motivo || "", coords: data.coords || "" },
+          plans: Object.keys(PLAN_LABELS).filter(code => code.startsWith("MHNET_")).map(code => ({
+            code,
+            name: String(PLAN_LABELS[code] || code).split(" — ")[0],
+            price: PLAN_VALUES[code] || 0,
+            description: "Plano MhNet disponível conforme viabilidade técnica."
+          }))
+        });
+        aplicarPlanosDaCobertura(resolution);
+        return resolution;
+      }
+      return { ...data, viable: false, operator: null, plans: [] };
+    }
+
     async function consultarCoberturaCloudRun(payload) {
+      const address = normalizarPayloadCoberturaSite(payload);
+      if (address.postalCode.length !== 8) return consultarCoberturaSemCepMhnet(payload);
+      const addressKey = chaveEnderecoCobertura(address);
+      const cached = lerCoberturaDaSessao(addressKey);
+      if (cached) {
+        const adaptedCached = adaptarResolucaoCobertura(cached);
+        aplicarPlanosDaCobertura(adaptedCached);
+        return adaptedCached;
+      }
+
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
       try {
         const response = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(address),
           signal: controller.signal
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.message || data.motivo || "Erro ao consultar cobertura.");
-        return data;
+        salvarCoberturaNaSessao(addressKey, data);
+        const adapted = adaptarResolucaoCobertura(data);
+        aplicarPlanosDaCobertura(adapted);
+        return adapted;
       } catch (error) {
         if (error.name === "AbortError") throw new Error("Consulta demorou mais que o esperado. Tente novamente.");
         throw error;
       } finally { clearTimeout(timer); }
     }
+
+    async function consultarCoberturaCloudRunComFallback(payload) {
+      return consultarCoberturaCloudRun(payload);
+    }
+
+    async function wtConsultarCoberturaEndpointComFallback(payload) {
+      return consultarCoberturaCloudRun(payload);
+    }
+
 
     async function consultarCobertura() {
       const cep = $("cep").value.trim();
@@ -2585,8 +4598,18 @@
       $("ctaViavel").classList.remove("show");
       $("btnContratarCobertura").href = "#";
 
-      if (cepLimpo.length !== 8) {
-        setStatus("Informe um CEP válido.", "bad");
+      trackGA4("clicou_consultar_cobertura", {
+        origem_consulta: "box_principal",
+        etapa_consulta: extraVisivel ? "consulta_cobertura" : "busca_endereco",
+        cep_preenchido: cepLimpo.length === 8 ? "sim" : "nao",
+        numero_preenchido: numero ? "sim" : "nao"
+      });
+
+      const coordsFixasConsulta = $("consultaCoordenadasFixas") ? $("consultaCoordenadasFixas").value.trim() : "";
+      const usandoLocalizacaoSemCepConsulta = consultaSemCepMode && coordsFixasConsulta;
+
+      if (cepLimpo.length !== 8 && !usandoLocalizacaoSemCepConsulta) {
+        setStatus("Informe um CEP válido ou clique em Não sei meu CEP para enviar sua localização.", "bad");
         return;
       }
 
@@ -2601,8 +4624,16 @@
         Se for CEP geral, o cliente completa rua e bairro.
       */
       if (!extraVisivel) {
+        if (usandoLocalizacaoSemCepConsulta) {
+          // Localização já capturada mas campos ainda não expandidos → expande e continua
+          if (extraBox) extraBox.classList.add("show");
+          setStatus("Localização recebida. Confira os dados do endereço e clique novamente para consultar cobertura.");
+          return;
+        }
+
         setLoading(true);
         setStatus("Buscando endereço...");
+        showGlobalLoading("Buscando endereço pelo CEP...");
 
         try {
           const endereco = await buscarEnderecoPorCep(cep);
@@ -2646,6 +4677,7 @@
 
         } finally {
           setLoading(false);
+          hideGlobalLoading();
         }
       }
 
@@ -2659,13 +4691,13 @@
       const uf = $("consultaUf").value.trim().toUpperCase();
       const complemento = $("consultaComplemento").value.trim();
 
-      if (!logradouro) {
+      if (!usandoLocalizacaoSemCepConsulta && !logradouro) {
         setStatus("Informe a rua ou avenida para consultar a cobertura.", "bad");
         $("consultaLogradouro").focus();
         return;
       }
 
-      if (!bairro) {
+      if (!usandoLocalizacaoSemCepConsulta && !bairro) {
         setStatus("Informe o bairro para consultar a cobertura.", "bad");
         $("consultaBairro").focus();
         return;
@@ -2686,7 +4718,7 @@
       $("consultaUf").value = uf;
 
       const fachada = [
-        logradouro,
+        logradouro || "Localização enviada pelo cliente",
         numero,
         bairro,
         cidade,
@@ -2704,6 +4736,7 @@
       setAddress(enderecoCompleto);
       setLoading(true);
       setStatus("Consultando cobertura...");
+      showGlobalLoading("Consultando cobertura no seu endereço...");
 
       try {
         const payload = {
@@ -2715,12 +4748,37 @@
           uf,
           complemento,
           fachada,
-          radius: FIXED_RADIUS
+          radius: FIXED_RADIUS,
+          semCep: consultaSemCepMode === true,
+          sem_cep: consultaSemCepMode === true,
+          coords: coordsFixasConsulta,
+          coordenadas: coordsFixasConsulta,
+          coordenadasFixas: coordsFixasConsulta,
+          latitude: $("consultaLatitudeFixa") ? $("consultaLatitudeFixa").value : "",
+          longitude: $("consultaLongitudeFixa") ? $("consultaLongitudeFixa").value : "",
+          latitudeFixa: $("consultaLatitudeFixa") ? $("consultaLatitudeFixa").value : "",
+          longitudeFixa: $("consultaLongitudeFixa") ? $("consultaLongitudeFixa").value : "",
+          linkLocalizacao: $("consultaLinkLocalizacaoFixa") ? $("consultaLinkLocalizacaoFixa").value : "",
+          enderecoLocalizacaoFixa: $("consultaEnderecoDetectadoLocalizacao") ? $("consultaEnderecoDetectadoLocalizacao").value : ""
         };
 
-        const res = await consultarCoberturaCloudRun(payload);
+        const res = await consultarCoberturaCloudRunComFallback(payload);
 
         if (res && res.ok === true && res.viavel === true) {
+          trackGA4("consulta_cobertura_viavel", {
+            origem_consulta: "box_principal",
+            cidade,
+            uf,
+            cep: cepLimpo
+          });
+
+          dispararLeadGoogleAdsConsultaViavel({
+            origem_consulta: "box_principal",
+            cidade,
+            uf,
+            cep: cepLimpo
+          });
+
           const mensagem = `Olá! Consultei a cobertura no site da WebTurbo, parceira de vendas autorizada MhNet, e quero contratar.\n\nCEP: ${cep}\nNúmero: ${numero}\nEndereço: ${enderecoCompleto}\nCoords: ${res.coords || "-"}\nMotivo: ${res.motivo || "-"}`;
 
           coberturaPaginaData = {
@@ -2740,35 +4798,57 @@
           $("ctaViavel").classList.add("show");
           setStatus("Cobertura disponível para este endereço.", "ok");
 
-          // Notificação silenciosa — avisa por e-mail a cada consulta viável
-          fetch(CLOUD_RUN_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "notifyConsulta",
-              cep: cepLimpo,
-              fachada,
-              nomeCidade: cidade,
-              uf,
-              cobertura: { motivo: res.motivo || "-", coords: res.coords || "" }
-            })
-          }).catch(() => {}); // silencioso, nunca bloqueia o usuário
+          // Notificação silenciosa — consulta viável da dobra principal
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: "box_principal", cep: cepLimpo, cidade, uf, viavel: true });
+          notificarConsultaViavel({
+            cep: cepLimpo,
+            fachada,
+            cidade,
+            uf,
+            motivo: res.motivo || "-",
+            coords: res.coords || coordsFixasConsulta || "",
+            origem: "box_principal"
+          });
         } else {
+          trackGA4("consulta_cobertura_inviavel", {
+            origem_consulta: "box_principal",
+            cidade,
+            uf,
+            cep: cepLimpo,
+            motivo: res && res.motivo ? res.motivo : "sem_viabilidade"
+          });
           coberturaPaginaData = null;
           setStatus("Ainda não temos cobertura disponível para este endereço. Fale com nosso atendimento para verificarmos outras possibilidades.", "bad");
         }
 
-      } catch {
+      } catch (err) {
+        trackGA4("erro_consulta_cobertura", { origem_consulta: "box_principal", erro: err && err.message ? err.message : "erro_consulta" });
         coberturaPaginaData = null;
         setStatus("Erro ao consultar cobertura. Tente novamente ou fale com nosso atendimento.", "bad");
       } finally {
         setLoading(false);
+        hideGlobalLoading();
       }
     }
 
-    $("cep").addEventListener("input", (e) => { e.target.value = formatCep(e.target.value); });
+    $("cep").addEventListener("input", (e) => {
+      e.target.value = formatCep(e.target.value);
+      consultaSemCepMode = false;
+      $("consultaLocationBox")?.classList.remove("show");
+    });
+    $("btnNaoSeiCepConsulta")?.addEventListener("click", ativarSemCepConsulta);
+    $("btnUsarLocalizacaoConsulta")?.addEventListener("click", () => usarLocalizacaoGenerica("consulta"));
     $("btnConsultar").addEventListener("click", consultarCobertura);
     $("btnLimpar").addEventListener("click", clearForm);
+    $("btnContratarCobertura").addEventListener("click", function() {
+      trackGoogleAdsWhatsAppConversion();
+      trackGA4("clique_whatsapp", {
+        origem_botao: "box_principal_cobertura_viavel",
+        cidade: coberturaPaginaData && coberturaPaginaData.cidade ? coberturaPaginaData.cidade : "",
+        uf: coberturaPaginaData && coberturaPaginaData.uf ? coberturaPaginaData.uf : "",
+        cep: coberturaPaginaData && coberturaPaginaData.cep ? onlyDigits(coberturaPaginaData.cep) : ""
+      });
+    });
     $("cep").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); consultarCobertura(); } });
     $("numero").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); consultarCobertura(); } });
     setAddress("");
@@ -2778,24 +4858,42 @@
     let modalCoverageValidated = false;
     let modalCoverageData = null;
     let coberturaPaginaData = null;
+    let modalSemCepMode = false;
+    const LEAD_DADOS_PESSOAIS_ENDPOINT = "https://webturbo-lead-zapier-964927461432.southamerica-east1.run.app";
+    let leadDadosPessoaisEventId = null;
+    let leadDadosPessoaisEnviado = false;
+    let leadDadosPessoaisEmEnvio = false;
 
     const PLAN_LABELS = {
-      "FIBRA 500MB": "FIBRA 500MB — R$ 99,90/mês",
-      "FIBRA 500MB + GLOBOPLAY": "FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês",
-      "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI": "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês",
-      "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY": "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês",
-      "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI": "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês",
-      "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI": "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês"
+      "MHNET_500": "FIBRA 500MB — R$ 99,90/mês",
+      "MHNET_500_GLOBOPLAY": "FIBRA 500MB + GLOBOPLAY — R$ 114,80/mês",
+      "MHNET_500_WIFI_EXTRA": "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI — R$ 119,90/mês",
+      "MHNET_600_WIFI_EXTRA_GLOBOPLAY": "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY — R$ 139,90/mês",
+      "MHNET_700_WIFI_EXTRA": "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI — R$ 149,90/mês",
+      "MHNET_1000_WIFI_EXTRA": "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI — R$ 159,90/mês"
     };
 
     const PLAN_VALUES = {
-      "FIBRA 500MB": 99.90,
-      "FIBRA 500MB + GLOBOPLAY": 114.80,
-      "FIBRA 500MB + 1 PONTO EXTRA DE WI-FI": 119.90,
-      "FIBRA 600MB + 1 PONTO EXTRA DE WI-FI + GLOBOPLAY": 139.90,
-      "FIBRA 700MB + 1 PONTO EXTRA DE WI-FI": 149.90,
-      "FIBRA 1 GIGA + 1 PONTO EXTRA DE WI-FI": 159.90
+      "MHNET_500": 99.90,
+      "MHNET_500_GLOBOPLAY": 114.80,
+      "MHNET_500_WIFI_EXTRA": 119.90,
+      "MHNET_600_WIFI_EXTRA_GLOBOPLAY": 139.90,
+      "MHNET_700_WIFI_EXTRA": 149.90,
+      "MHNET_1000_WIFI_EXTRA": 159.90
     };
+
+    function salvarPlanoSelecionadoSessao(planCode) {
+      try {
+        const cached = JSON.parse(sessionStorage.getItem(COVERAGE_SESSION_KEY) || "null");
+        if (!cached) return;
+        cached.selectedPlan = String(planCode || "");
+        sessionStorage.setItem(COVERAGE_SESSION_KEY, JSON.stringify(cached));
+      } catch {}
+    }
+
+    if ($("mPlano")) {
+      $("mPlano").addEventListener("change", event => salvarPlanoSelecionadoSessao(event.target.value));
+    }
 
     function isValidCpf(cpf) {
       const d = onlyDigits(cpf);
@@ -2868,16 +4966,23 @@
       });
       const box = $("coverageOkBox");
       if (box) box.classList.remove("show");
+      resetModalLocation();
     }
 
     function abrirModal(planoPreSelecionado) {
       modalPlanoPreSelecionado = planoPreSelecionado || "";
+      trackGA4("abriu_modal_contratacao", {
+        plano: modalPlanoPreSelecionado,
+        origem_modal: coberturaPaginaData && coberturaPaginaData.cobertura && coberturaPaginaData.cobertura.viavel === true ? "consulta_cobertura" : "card_plano"
+      });
       modalCoverageValidated = false;
       modalCoverageData = null;
+      modalSemCepMode = false;
       resetModalVisual();
 
       const enderecoCompletoEl = $("modalEnderecoCompleto");
       if (enderecoCompletoEl) enderecoCompletoEl.classList.remove("show");
+      esconderBoxLocalizacaoModal();
 
       const btnEndereco = document.querySelector("#etapa1 .btn-modal-next");
       if (btnEndereco) {
@@ -2896,6 +5001,7 @@
       $("modalOverlay").classList.add("open");
       document.body.style.overflow = "hidden";
       mostrarEtapa(1);
+      initModalLocationMap();
       setTimeout(() => $("mCep").focus(), 120);
     }
 
@@ -2920,6 +5026,7 @@
       modalCoverageValidated = true;
       modalCoverageData = coberturaPaginaData.cobertura;
       $("coverageOkBox").classList.add("show");
+      esconderBoxLocalizacaoModal();
 
       mostrarEtapa(2);
     }
@@ -2931,6 +5038,8 @@
 
     $("modalOverlay").addEventListener("click", function(e) { if (e.target === this) fecharModal(); });
     document.addEventListener("keydown", function(e) { if (e.key === "Escape") fecharModal(); });
+    $("btnNaoSeiCepModal")?.addEventListener("click", ativarModalSemCep);
+    $("btnUsarLocalizacaoModal")?.addEventListener("click", usarLocalizacaoAtualModal);
 
     function mostrarEtapa(n) {
       ["etapa1","etapa2","etapa3","etapa4","etapa5","etapaSucesso"].forEach((id, index) => {
@@ -2974,16 +5083,436 @@
       if (box) box.classList.remove("show");
     }
 
+
+
+    let modalLocationMap = null;
+    let modalLocationMarker = null;
+    let modalLocationMapReady = false;
+
+    function setModalLocationStatus(message, type) {
+      const el = $("modalLocationStatus");
+      if (!el) return;
+      el.textContent = message;
+      el.className = "modal-location-status" + (type ? " " + type : "");
+    }
+
+    function formatLocationCoord(value) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "";
+      return n.toFixed(7);
+    }
+
+    function parseCoordsString(coords) {
+      const raw = String(coords || "").trim();
+      const match = raw.match(/(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)/);
+      if (!match) return null;
+      const lat = Number(match[1]);
+      const lng = Number(match[2]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return { lat, lng };
+    }
+
+    function getModalCoordsFixas() {
+      const raw = $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "";
+      return parseCoordsString(raw);
+    }
+
+    function garantirReferenciaPorLocalizacao() {
+      const coords = getModalCoordsFixas();
+      if (coords && $("mPontoRef") && !$("mPontoRef").value.trim()) {
+        $("mPontoRef").value = "Localização enviada pelo mapa/GPS";
+        fieldOk("mPontoRef");
+      }
+    }
+
+    function resetModalLocation() {
+      ["mLatitudeFixa", "mLongitudeFixa", "mCoordenadasFixas", "mLinkLocalizacaoFixa", "mEnderecoDetectadoLocalizacao"].forEach(id => {
+        const el = $(id);
+        if (el) el.value = "";
+      });
+      setModalLocationStatus("Toque no mapa ou clique em 'Capturar minha localização' para marcar sua casa com precisão.");
+      if (modalLocationMarker && modalLocationMap) {
+        modalLocationMap.removeLayer(modalLocationMarker);
+        modalLocationMarker = null;
+      }
+    }
+
+    function initModalLocationMap() {
+      if (typeof L === "undefined" || !$("modalLocationMap")) return;
+
+      if (!modalLocationMapReady) {
+        modalLocationMap = L.map("modalLocationMap", {
+          zoomControl: true,
+          attributionControl: true
+        }).setView([-14.2350, -51.9253], 4);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap contributors"
+        }).addTo(modalLocationMap);
+
+        modalLocationMap.on("click", function(event) {
+          handleModalLocationSelected(event.latlng.lat, event.latlng.lng, false);
+        });
+
+        modalLocationMapReady = true;
+      }
+
+      setTimeout(() => {
+        if (modalLocationMap) modalLocationMap.invalidateSize();
+      }, 180);
+    }
+
+    function updateModalLocationMarker(lat, lng, shouldZoom) {
+      if (!modalLocationMapReady) initModalLocationMap();
+      if (!modalLocationMap) return;
+
+      const position = [lat, lng];
+
+      if (!modalLocationMarker) {
+        modalLocationMarker = L.marker(position, { draggable: true }).addTo(modalLocationMap);
+        modalLocationMarker.on("dragend", function() {
+          const pos = modalLocationMarker.getLatLng();
+          handleModalLocationSelected(pos.lat, pos.lng, false);
+        });
+      } else {
+        modalLocationMarker.setLatLng(position);
+      }
+
+      modalLocationMap.setView(position, shouldZoom ? 17 : Math.max(modalLocationMap.getZoom(), 16));
+    }
+
+    function saveModalLocationFields(lat, lng, address) {
+      const latFmt = formatLocationCoord(lat);
+      const lngFmt = formatLocationCoord(lng);
+      const coords = latFmt && lngFmt ? `${latFmt},${lngFmt}` : "";
+
+      if ($("mLatitudeFixa")) $("mLatitudeFixa").value = latFmt;
+      if ($("mLongitudeFixa")) $("mLongitudeFixa").value = lngFmt;
+      if ($("mCoordenadasFixas")) $("mCoordenadasFixas").value = coords;
+      if ($("mLinkLocalizacaoFixa")) $("mLinkLocalizacaoFixa").value = coords ? `https://www.google.com/maps?q=${coords}` : "";
+
+      if (address && $("mEnderecoDetectadoLocalizacao")) {
+        $("mEnderecoDetectadoLocalizacao").value = address;
+      }
+    }
+
+    async function reverseGeocodeModalLocation(lat, lng) {
+      const url = new URL("https://nominatim.openstreetmap.org/reverse");
+      url.searchParams.set("format", "jsonv2");
+      url.searchParams.set("lat", lat);
+      url.searchParams.set("lon", lng);
+      url.searchParams.set("addressdetails", "1");
+      url.searchParams.set("accept-language", "pt-BR");
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: { "Accept": "application/json" }
+      });
+
+      if (!response.ok) throw new Error("reverse_geocode_failed");
+      return await response.json().catch(() => ({}));
+    }
+
+    async function buscarCepViaEnderecoModal(uf, cidade, logradouro) {
+      const ufLimpo = String(uf || "").trim().toUpperCase().slice(0, 2);
+      const cidadeLimpa = String(cidade || "").trim();
+      const logradouroLimpo = String(logradouro || "").trim();
+
+      if (!ufLimpo || !cidadeLimpa || !logradouroLimpo || logradouroLimpo.length < 3) {
+        return "";
+      }
+
+      try {
+        const url = `https://viacep.com.br/ws/${encodeURIComponent(ufLimpo)}/${encodeURIComponent(cidadeLimpa)}/${encodeURIComponent(logradouroLimpo)}/json/`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) return "";
+
+        const data = await response.json().catch(() => []);
+        if (!Array.isArray(data) || !data.length) return "";
+
+        const bairroAtual = String($('mBairro')?.value || "").trim().toLowerCase();
+        const melhor = data.find(function(item) {
+          return bairroAtual && String(item.bairro || "").trim().toLowerCase() === bairroAtual;
+        }) || data[0];
+
+        return String(melhor.cep || "").replace(/\D+/g, "").slice(0, 8);
+      } catch (error) {
+        console.warn("Falha ao buscar CEP por UF/cidade/logradouro:", error);
+        return "";
+      }
+    }
+
+    async function preencherCamposEnderecoComLocalizacaoModal(data) {
+      if (!data || !data.address) return;
+
+      const address = data.address || {};
+
+      const logradouro =
+        address.road ||
+        address.pedestrian ||
+        address.footway ||
+        address.residential ||
+        address.path ||
+        address.street ||
+        "";
+
+      const numero = address.house_number || "";
+
+      const bairro =
+        address.suburb ||
+        address.neighbourhood ||
+        address.quarter ||
+        address.city_district ||
+        address.hamlet ||
+        address.village_suburb ||
+        "";
+
+      const cidade =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.county ||
+        "";
+
+      let uf = address.state_code || "";
+
+      if (!uf && address.state) {
+        const estados = {
+          "Acre": "AC",
+          "Alagoas": "AL",
+          "Amapá": "AP",
+          "Amazonas": "AM",
+          "Bahia": "BA",
+          "Ceará": "CE",
+          "Distrito Federal": "DF",
+          "Espírito Santo": "ES",
+          "Goiás": "GO",
+          "Maranhão": "MA",
+          "Mato Grosso": "MT",
+          "Mato Grosso do Sul": "MS",
+          "Minas Gerais": "MG",
+          "Pará": "PA",
+          "Paraíba": "PB",
+          "Paraná": "PR",
+          "Pernambuco": "PE",
+          "Piauí": "PI",
+          "Rio de Janeiro": "RJ",
+          "Rio Grande do Norte": "RN",
+          "Rio Grande do Sul": "RS",
+          "Rondônia": "RO",
+          "Roraima": "RR",
+          "Santa Catarina": "SC",
+          "São Paulo": "SP",
+          "Sergipe": "SE",
+          "Tocantins": "TO"
+        };
+        uf = estados[address.state] || "";
+      }
+
+      let cep = String(address.postcode || "").replace(/\D+/g, "").slice(0, 8);
+
+      if ($("mLogradouro") && logradouro) $("mLogradouro").value = logradouro;
+      if ($("mNumero") && numero && !$("mNumero").value.trim()) $("mNumero").value = numero;
+      if ($("mBairro") && bairro) $("mBairro").value = bairro;
+      if ($("mCidade") && cidade) $("mCidade").value = cidade;
+      if ($("mUf") && uf) $("mUf").value = String(uf).toUpperCase().slice(0, 2);
+
+      if (cep.length !== 8) {
+        cep = await buscarCepViaEnderecoModal(uf, cidade, logradouro);
+      }
+
+      if ($("mCep") && cep.length === 8) {
+        $("mCep").value = cep.replace(/^(\d{5})(\d{3})$/, "$1-$2");
+        fieldOk("mCep");
+      }
+
+      // Expande campos de endereço APÓS a localização ser capturada
+      const enderecoCompletoEl = $("modalEnderecoCompleto");
+      if (enderecoCompletoEl) enderecoCompletoEl.classList.add("show");
+
+      ["mCep", "mNumero", "mLogradouro", "mBairro", "mCidade", "mUf"].forEach(function(id) {
+        const el = $(id);
+        if (el && el.value.trim()) fieldOk(id);
+      });
+
+      resetCoverageValidation();
+    }
+
+    async function handleModalLocationSelected(lat, lng, shouldZoom) {
+      saveModalLocationFields(lat, lng, "");
+      updateModalLocationMarker(lat, lng, shouldZoom !== false);
+      setModalLocationStatus("Coordenadas salvas. Buscando endereço aproximado...", "ok");
+
+      try {
+        const dataEndereco = await reverseGeocodeModalLocation(lat, lng);
+        const enderecoFormatado = dataEndereco && dataEndereco.display_name ? dataEndereco.display_name : "Endereço aproximado não localizado.";
+
+        saveModalLocationFields(lat, lng, enderecoFormatado);
+        await preencherCamposEnderecoComLocalizacaoModal(dataEndereco);
+        garantirReferenciaPorLocalizacao();
+
+        const precisaNumero = $("mNumero") && !$("mNumero").value.trim();
+        if (precisaNumero) {
+          fieldError("mNumero", "Confira a localização e informe o número da casa.");
+          setModalLocationStatus("Localização salva. Agora informe o número da casa para continuar.", "ok");
+        } else {
+          setModalLocationStatus("Localização salva. Confira os dados e avance para consultar a cobertura.", "ok");
+        }
+        recolherMapaLocalizacao("modal");
+        guiarDepoisDaLocalizacao("modal");
+      } catch (e) {
+        if ($("mEnderecoDetectadoLocalizacao")) $("mEnderecoDetectadoLocalizacao").value = "Endereço automático indisponível. As coordenadas foram salvas normalmente.";
+        setModalLocationStatus("Coordenadas salvas. Complete os campos necessários para continuar.", "bad");
+        recolherMapaLocalizacao("modal");
+        guiarDepoisDaLocalizacao("modal");
+      }
+    }
+
+    function usarLocalizacaoAtualModal() {
+      expandirMapaLocalizacao("modal");
+      const btn = $("btnUsarLocalizacaoModal");
+
+      if (!navigator.geolocation) {
+        setModalLocationStatus("Seu navegador não suporta geolocalização. Toque no mapa para fixar o ponto.", "bad");
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Capturando...";
+      }
+
+      setModalLocationStatus("Solicitando permissão de localização do navegador...", "ok");
+
+      navigator.geolocation.getCurrentPosition(
+        async function(position) {
+          const accuracy = Math.round(position.coords.accuracy || 0);
+
+          if (accuracy && accuracy > 150) {
+            setModalLocationStatus(`Localização capturada com baixa precisão: aproximadamente ${accuracy} metros. Confira o ponto no mapa e ajuste se necessário.`, "bad");
+          } else if (accuracy) {
+            setModalLocationStatus(`Localização capturada com precisão aproximada de ${accuracy} metros. Buscando endereço...`, "ok");
+          }
+
+          await handleModalLocationSelected(position.coords.latitude, position.coords.longitude, true);
+
+          if (btn) {
+            btn.disabled = false;
+            const box = wtGuideGet(wtLocationBoxId("modal"));
+            btn.textContent = box && box.classList.contains("location-collapsed") ? "Alterar localização" : "📍 Capturar minha localização";
+          }
+        },
+        function(error) {
+          let message = "Não foi possível capturar sua localização. Toque no mapa para fixar manualmente.";
+          if (error.code === error.PERMISSION_DENIED) message = "Permissão de localização negada. Toque no mapa para fixar manualmente.";
+          if (error.code === error.POSITION_UNAVAILABLE) message = "Localização indisponível no momento. Toque no mapa para fixar manualmente.";
+          if (error.code === error.TIMEOUT) message = "A localização demorou demais. Tente novamente ou toque no mapa.";
+          setModalLocationStatus(message, "bad");
+          if (btn) {
+            btn.disabled = false;
+            btn.textContent = "Usar minha localização atual";
+          }
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      );
+    }
+
+    function aplicarCoordsCoberturaNoMapa() {
+      const coords = modalCoverageData && modalCoverageData.coords ? parseCoordsString(modalCoverageData.coords) : null;
+      if (!coords) return;
+      saveModalLocationFields(coords.lat, coords.lng, "Coordenadas retornadas pela consulta de cobertura.");
+      updateModalLocationMarker(coords.lat, coords.lng, true);
+      setModalLocationStatus("O ponto retornado pela consulta foi carregado no mapa. Ajuste manualmente se necessário.", "ok");
+    }
+
+    function mostrarBoxLocalizacaoModal(message) {
+      const box = $("modalLocationBox");
+      if (box) { box.classList.add("show"); box.classList.remove("location-collapsed"); }
+      initModalLocationMap();
+      if (message) setModalLocationStatus(message, "ok");
+      setTimeout(() => {
+        if (modalLocationMap) modalLocationMap.invalidateSize();
+      }, 220);
+    }
+
+    function esconderBoxLocalizacaoModal() {
+      const box = $("modalLocationBox");
+      if (box) box.classList.remove("show");
+    }
+
+    function ativarModalSemCep() {
+      modalSemCepMode = true;
+      // Mostra APENAS o mapa/GPS — campos de endereço aparecem após localização capturada
+      fieldReset("mCep");
+      if ($("mCep")) $("mCep").value = "";
+      const btnEndereco = document.querySelector("#etapa1 .btn-modal-next");
+      if (btnEndereco) btnEndereco.innerHTML = "Consultar cobertura e continuar →";
+      mostrarBoxLocalizacaoModal("Toque no mapa ou clique em 'Capturar minha localização' para marcar sua casa. Os campos de endereço serão preenchidos automaticamente.");
+      setTimeout(() => $("mNumero") && $("mNumero").focus(), 80);
+    }
+
     function validarCamposEndereco() {
       let hasError = false;
       ["mCep","mNumero","mLogradouro","mBairro","mCidade","mUf","mPontoRef"].forEach(fieldReset);
-      if (onlyDigits($("mCep").value).length !== 8) { fieldError("mCep", "Informe um CEP válido."); hasError = true; } else fieldOk("mCep");
-      if (!$("mNumero").value.trim())     { fieldError("mNumero", "Informe o número."); hasError = true; } else fieldOk("mNumero");
-      if (!$("mLogradouro").value.trim()) { fieldError("mLogradouro", "Informe o logradouro."); hasError = true; } else fieldOk("mLogradouro");
-      if (!$("mBairro").value.trim())     { fieldError("mBairro", "Informe o bairro."); hasError = true; } else fieldOk("mBairro");
-      if (!$("mCidade").value.trim())     { fieldError("mCidade", "Informe a cidade."); hasError = true; } else fieldOk("mCidade");
-      if (!$("mUf").value.trim())         { fieldError("mUf", "Informe a UF."); hasError = true; } else fieldOk("mUf");
-      if (!$("mPontoRef").value.trim())   { fieldError("mPontoRef", "Informe um ponto de referência."); hasError = true; } else fieldOk("mPontoRef");
+
+      const cepValido = onlyDigits($("mCep").value).length === 8;
+      const coordsFixas = getModalCoordsFixas();
+      const usandoLocalizacaoSemCep = modalSemCepMode && coordsFixas;
+
+      if (!modalSemCepMode && !cepValido) {
+        fieldError("mCep", "Informe um CEP válido ou clique em Não sei meu CEP.");
+        hasError = true;
+      } else if (cepValido) {
+        fieldOk("mCep");
+      } else if (usandoLocalizacaoSemCep) {
+        fieldReset("mCep");
+      }
+
+      if (!$("mNumero").value.trim()) {
+        fieldError("mNumero", "Informe o número.");
+        hasError = true;
+      } else {
+        fieldOk("mNumero");
+      }
+
+      const logradouroVazio = !$("mLogradouro").value.trim();
+      const bairroVazio = !$("mBairro").value.trim();
+      const cidadeVazia = !$("mCidade").value.trim();
+      const ufVazia = !$("mUf").value.trim();
+
+      /*
+        No modo "Não sei meu CEP", a coordenada GPS passa a ser a principal referência
+        para consultar cobertura. Por isso, não travamos o avanço quando o reverse geocode
+        não devolve rua/bairro com precisão. O cliente ainda pode corrigir manualmente.
+      */
+      if (!usandoLocalizacaoSemCep && logradouroVazio) { fieldError("mLogradouro", "Informe o logradouro."); hasError = true; } else if (!logradouroVazio) fieldOk("mLogradouro");
+      if (!usandoLocalizacaoSemCep && bairroVazio)     { fieldError("mBairro", "Informe o bairro."); hasError = true; } else if (!bairroVazio) fieldOk("mBairro");
+      if (cidadeVazia)                                { fieldError("mCidade", "Informe a cidade."); hasError = true; } else fieldOk("mCidade");
+      if (ufVazia)                                    { fieldError("mUf", "Informe a UF."); hasError = true; } else fieldOk("mUf");
+
+      if (modalSemCepMode && !coordsFixas) {
+        mostrarBoxLocalizacaoModal("Marque a localização no mapa ou use a localização atual para continuar sem CEP.");
+        setModalLocationStatus("Para continuar sem CEP, envie a localização pelo botão ou toque no mapa.", "bad");
+        hasError = true;
+      }
+
+      if (usandoLocalizacaoSemCep) {
+        garantirReferenciaPorLocalizacao();
+      }
+
+      if (!$("mPontoRef").value.trim()) {
+        fieldError("mPontoRef", "Informe um ponto de referência ou envie a localização.");
+        hasError = true;
+      } else {
+        fieldOk("mPontoRef");
+      }
+
       return !hasError;
     }
 
@@ -2996,12 +5525,26 @@
 
       ["mCep", "mNumero", "mLogradouro", "mBairro", "mCidade", "mUf", "mPontoRef"].forEach(fieldReset);
 
-      const cep = onlyDigits($("mCep").value);
+      let cep = onlyDigits($("mCep").value);
       const numero = $("mNumero").value.trim();
+      const coordsFixas = getModalCoordsFixas();
       const btn = document.querySelector("#etapa1 .btn-modal-next");
 
-      if (cep.length !== 8) {
-        fieldError("mCep", "Informe um CEP válido.");
+      trackGA4("clicou_consultar_cobertura", {
+        origem_consulta: "modal_contratacao",
+        etapa_consulta: enderecoCompletoVisivel ? "consulta_cobertura" : "busca_endereco",
+        cep_preenchido: cep.length === 8 ? "sim" : "nao",
+        numero_preenchido: numero ? "sim" : "nao"
+      });
+
+      if (cep.length !== 8 && !modalSemCepMode) {
+        fieldError("mCep", "Informe um CEP válido ou clique em Não sei meu CEP.");
+        return;
+      }
+
+      if (modalSemCepMode && cep.length !== 8 && !coordsFixas) {
+        mostrarBoxLocalizacaoModal("Marque a localização no mapa ou use a localização atual para continuar sem CEP.");
+        setModalLocationStatus("Para consultar sem CEP, primeiro envie a localização pelo botão ou toque no mapa.", "bad");
         return;
       }
 
@@ -3010,12 +5553,19 @@
         return;
       }
 
-      fieldOk("mCep");
+      if (cep.length === 8) fieldOk("mCep");
       fieldOk("mNumero");
 
-      if (!enderecoCompletoVisivel) {
+      // Se modo semCep e localização já capturada mas campos ainda não expandidos → expande
+      if (!enderecoCompletoVisivel && modalSemCepMode && coordsFixas) {
+        if (enderecoCompletoEl) enderecoCompletoEl.classList.add("show");
+        btn.innerHTML = "Consultar cobertura e continuar →";
+        // Continua para validação/consulta normalmente
+      }
+
+      if (!enderecoCompletoVisivel && !modalSemCepMode) {
         btn.disabled = true;
-        btn.innerHTML = '<div class="spinner"></div> Buscando endereço...';
+        showGlobalLoading("Buscando endereço pelo CEP...");
 
         try {
           await buscarCepModal(cep);
@@ -3027,6 +5577,7 @@
 
         btn.disabled = false;
         btn.innerHTML = "Consultar cobertura e continuar →";
+        hideGlobalLoading();
 
         const logradouro = $("mLogradouro").value.trim();
         const bairro = $("mBairro").value.trim();
@@ -3046,7 +5597,8 @@
         else fieldOk("mUf");
 
         if (!logradouro || !bairro || !cidade || !uf) {
-          erroEl.textContent = "Esse CEP parece ser geral. Complete os dados do endereço para consultar a cobertura.";
+          mostrarBoxLocalizacaoModal("Esse CEP parece ser geral. Complete o endereço e, se possível, fixe a localização no mapa.");
+          erroEl.textContent = "Esse CEP parece ser geral. Complete os dados do endereço e use a localização se não souber todos os dados.";
           erroEl.classList.add("show");
         } else {
           erroEl.textContent = "Endereço carregado. Confira os dados e clique em consultar cobertura para continuar.";
@@ -3065,13 +5617,17 @@
       }
 
       btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div> Consultando cobertura...';
+      showGlobalLoading("Consultando cobertura no endereço informado...");
 
       try {
-        const logradouro = $("mLogradouro").value.trim();
-        const bairro = $("mBairro").value.trim();
+        const coordsTexto = $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "";
+        const coordsObj = parseCoordsString(coordsTexto);
+        const logradouro = $("mLogradouro").value.trim() || (modalSemCepMode && coordsObj ? "Localização enviada pelo mapa" : "");
+        const bairro = $("mBairro").value.trim() || (modalSemCepMode && coordsObj ? "Não informado" : "");
         const cidade = $("mCidade").value.trim();
-        const uf = $("mUf").value.trim();
+        const uf = $("mUf").value.trim().toUpperCase();
+        const pontoReferencia = $("mPontoRef").value.trim() || (coordsObj ? "Localização enviada pelo mapa/GPS" : "");
+        const enderecoLocalizacao = $("mEnderecoDetectadoLocalizacao") ? $("mEnderecoDetectadoLocalizacao").value.trim() : "";
 
         const fachada = [
           logradouro,
@@ -3089,32 +5645,83 @@
           cidade,
           uf,
           complemento: $("mComplemento").value.trim(),
-          ponto_referencia: $("mPontoRef").value.trim(),
+          ponto_referencia: pontoReferencia,
+          coordenadas_fixadas: coordsTexto,
+          coordenadasFixas: coordsTexto,
+          coordenadas: coordsTexto,
+          coords: coordsTexto,
+          latitude: coordsObj ? String(coordsObj.lat) : "",
+          longitude: coordsObj ? String(coordsObj.lng) : "",
+          latitudeFixa: coordsObj ? String(coordsObj.lat) : "",
+          longitudeFixa: coordsObj ? String(coordsObj.lng) : "",
+          linkLocalizacao: coordsTexto ? `https://www.google.com/maps?q=${coordsTexto}` : "",
+          sem_cep: modalSemCepMode === true,
+          semCep: modalSemCepMode === true,
+          endereco_localizacao_fixada: enderecoLocalizacao,
+          enderecoLocalizacaoFixa: enderecoLocalizacao,
           fachada,
           radius: FIXED_RADIUS
         };
 
-        const res = await consultarCoberturaCloudRun(payload);
+        const res = await consultarCoberturaCloudRunComFallback(payload);
 
         if (res && res.ok === true && res.viavel === true) {
+          trackGA4("consulta_cobertura_viavel", {
+            origem_consulta: "modal_contratacao",
+            cidade,
+            uf,
+            cep
+          });
+
+          dispararLeadGoogleAdsConsultaViavel({
+            origem_consulta: "modal_contratacao",
+            cidade,
+            uf,
+            cep
+          });
+
+          console.info("[cobertura] Chamando notificarConsultaViavel", { origem: "modal_contratacao", cep, cidade, uf, viavel: true });
+          notificarConsultaViavel({
+            cep,
+            fachada,
+            cidade,
+            uf,
+            motivo: res && res.motivo ? res.motivo : "-",
+            coords: res && res.coords ? res.coords : "",
+            origem: "modal_contratacao"
+          });
+
           modalCoverageValidated = true;
           modalCoverageData = res;
           $("coverageOkBox").classList.add("show");
           mostrarEtapa(2);
         } else {
+          trackGA4("consulta_cobertura_inviavel", {
+            origem_consulta: "modal_contratacao",
+            cidade,
+            uf,
+            cep,
+            motivo: res && res.motivo ? res.motivo : "sem_viabilidade"
+          });
           modalCoverageValidated = false;
           modalCoverageData = null;
           erroEl.textContent = "Não encontramos cobertura para este endereço no momento." + (res && res.motivo ? " Motivo: " + res.motivo : "");
           erroEl.classList.add("show");
         }
       } catch (err) {
+        trackGA4("erro_consulta_cobertura", { origem_consulta: "modal_contratacao", erro: err && err.message ? err.message : "erro_consulta" });
         modalCoverageValidated = false;
         modalCoverageData = null;
-        erroEl.textContent = err.message || "Erro ao consultar cobertura. Tente novamente.";
+        if (modalSemCepMode && getModalCoordsFixas()) {
+          erroEl.textContent = "Não conseguimos concluir a consulta automática apenas pela localização. Confira se cidade, UF e número estão corretos ou informe o CEP se souber.";
+        } else {
+          erroEl.textContent = err.message || "Erro ao consultar cobertura. Tente novamente.";
+        }
         erroEl.classList.add("show");
       } finally {
         btn.disabled = false;
         btn.innerHTML = "Consultar cobertura e continuar →";
+        hideGlobalLoading();
       }
     }
 
@@ -3124,6 +5731,59 @@
       fieldOk("mPlano");
       mostrarEtapa(3);
       setTimeout(() => $("mNome").focus(), 120);
+    }
+
+    async function enviarLeadDadosPessoais() {
+      if (leadDadosPessoaisEnviado || leadDadosPessoaisEmEnvio) return;
+
+      if (!leadDadosPessoaisEventId) {
+        leadDadosPessoaisEventId = `lead_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      }
+
+      const nomeCompleto = $("mNome").value.trim();
+      const partesNome = nomeCompleto.split(/\s+/);
+      const primeiroNome = partesNome[0] || "";
+      const sobrenome = partesNome.slice(1).join(" ");
+
+      const payload = {
+        event_id: leadDadosPessoaisEventId,
+        user_id: leadDadosPessoaisEventId,
+        event_name: "Lead",
+        phone: onlyDigits($("mTelefone1").value),
+        email: $("mEmail").value.trim().toLowerCase(),
+        first_name: primeiroNome,
+        last_name: sobrenome,
+        city: $("mCidade").value.trim(),
+        state: $("mUf").value.trim().toUpperCase(),
+        country: "BR",
+        currency: "BRL",
+        value: 0,
+        lead_stage: "dados_pessoais_enviados",
+        source: "site_webturbo"
+      };
+
+      leadDadosPessoaisEmEnvio = true;
+
+      try {
+        const response = await fetch(LEAD_DADOS_PESSOAIS_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          throw new Error(`http_${response.status}`);
+        }
+
+        leadDadosPessoaisEnviado = true;
+        console.info("Evento de Lead enviado com sucesso.", {
+          status_http: response.status
+        });
+      } finally {
+        leadDadosPessoaisEmEnvio = false;
+      }
     }
 
     function validarEtapaDados() {
@@ -3148,6 +5808,13 @@
         if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
+
+      enviarLeadDadosPessoais().catch((erro) => {
+        console.warn("Não foi possível enviar o evento de Lead.", {
+          mensagem: erro && erro.message ? erro.message : "erro_desconhecido"
+        });
+      });
+
       mostrarEtapa(4);
     }
 
@@ -3166,12 +5833,76 @@
       return String(value || "-").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
     }
 
+    function nomeMesFatura(i) {
+      return [
+        "janeiro", "fevereiro", "março", "abril", "maio", "junho",
+        "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"
+      ][i];
+    }
+
+    function round2(n) {
+      return Math.round(Number(n || 0) * 100) / 100;
+    }
+
+    function formatReais(n) {
+      return "R$ " + Number(n || 0).toFixed(2).replace(".", ",");
+    }
+
+    function calcularFaturamentoResumo() {
+      const planoSelecionado = $("mPlano") ? $("mPlano").value : "";
+      const valorPlano = PLAN_VALUES[planoSelecionado] || 0;
+      const vencimentoDia = $("mVencimento") ? $("mVencimento").value : "";
+
+      if (!valorPlano || !vencimentoDia) {
+        return {
+          proporcional: "-",
+          cheia: "-"
+        };
+      }
+
+      // Mesma regra usada no ManyChat: instalação estimada em D+2
+      const hoje = new Date();
+      const dataInstalacao = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+      dataInstalacao.setDate(dataInstalacao.getDate() + 2);
+
+      const anoInst = dataInstalacao.getFullYear();
+      const mesInst = dataInstalacao.getMonth();
+      const diaInst = dataInstalacao.getDate();
+      const diasMesInst = new Date(anoInst, mesInst + 1, 0).getDate();
+      const diasUso = Math.max(1, diasMesInst - diaInst + 1);
+      const valorProporcional = round2((valorPlano / diasMesInst) * diasUso);
+
+      const mesPropMes = (mesInst + 1) % 12;
+      const mesPropAno = anoInst + (mesInst === 11 ? 1 : 0);
+      const mesCheiaMes = (mesInst + 2) % 12;
+      const mesCheiaAno = anoInst + (mesInst >= 10 ? 1 : 0);
+
+      const mesFaturaPropStr = nomeMesFatura(mesPropMes) + "/" + mesPropAno;
+      const mesFaturaCheiaStr = nomeMesFatura(mesCheiaMes) + "/" + mesCheiaAno;
+      const valorPlanoStr = formatReais(valorPlano);
+      const valorPropStr = formatReais(valorProporcional);
+      const percentual = valorProporcional / valorPlano;
+      const usarMensagemEspecial = (diaInst <= 5) || (percentual >= 0.90);
+
+      return {
+        proporcional: usarMensagemEspecial
+          ? `A fatura de ${mesFaturaPropStr} será referente aos dias utilizados em ${nomeMesFatura(mesInst)}.`
+          : `Em ${mesFaturaPropStr} você receberá um valor proporcional referente aos dias de uso — em torno de ${valorPropStr}.`,
+        cheia: `${valorPlanoStr} no dia ${vencimentoDia} de ${mesFaturaCheiaStr}.`
+      };
+    }
+
     function montarResumo() {
+      const faturamento = calcularFaturamentoResumo();
       const rows = [
         ["Endereço", `${$("mLogradouro").value}, ${$("mNumero").value} - ${$("mBairro").value} - ${$("mCidade").value}/${$("mUf").value}`],
         ["Complemento", $("mComplemento").value || "-"],
         ["Referência", $("mPontoRef").value],
+        ["Localização enviada", $("mCoordenadasFixas") && $("mCoordenadasFixas").value ? $("mCoordenadasFixas").value : "-"],
+        ["Endereço detectado", $("mEnderecoDetectadoLocalizacao") && $("mEnderecoDetectadoLocalizacao").value ? $("mEnderecoDetectadoLocalizacao").value : "-"],
         ["Plano", PLAN_LABELS[$("mPlano").value] || $("mPlano").value],
+        ["Fatura proporcional", faturamento.proporcional],
+        ["Primeira fatura cheia", faturamento.cheia],
         ["Cliente", $("mNome").value],
         ["CPF", $("mCpf").value],
         ["E-mail", $("mEmail").value],
@@ -3200,20 +5931,32 @@
         telefone1Cliente:        onlyDigits($("mTelefone1").value),
         telefone2Cliente:        onlyDigits($("mTelefone2").value),
         cep:                     onlyDigits($("mCep").value),
+        semCep:                  modalSemCepMode === true,
+        sem_cep:                 modalSemCepMode === true,
         uf:                      $("mUf").value.trim().toUpperCase(),
         nomeCidade:              $("mCidade").value.trim(),
+        cidade:                  $("mCidade").value.trim(),
         bairro:                  $("mBairro").value.trim(),
         logradouro:              $("mLogradouro").value.trim(),
         numero:                  $("mNumero").value.trim(),
         complemento:             $("mComplemento").value.trim(),
-        pontoReferencia:         $("mPontoRef").value.trim(),
-        planos:                  $("mPlano").value,
+        pontoReferencia:         $("mPontoRef").value.trim() || ($("mCoordenadasFixas") && $("mCoordenadasFixas").value ? "Localização enviada pelo mapa/GPS" : ""),
+        ponto_referencia:        $("mPontoRef").value.trim() || ($("mCoordenadasFixas") && $("mCoordenadasFixas").value ? "Localização enviada pelo mapa/GPS" : ""),
+        latitudeFixa:            $("mLatitudeFixa") ? $("mLatitudeFixa").value.trim() : "",
+        longitudeFixa:           $("mLongitudeFixa") ? $("mLongitudeFixa").value.trim() : "",
+        coordenadasFixas:        $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "",
+        coordenadas:             $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "",
+        coords:                  $("mCoordenadasFixas") ? $("mCoordenadasFixas").value.trim() : "",
+        enderecoLocalizacaoFixa: $("mEnderecoDetectadoLocalizacao") ? $("mEnderecoDetectadoLocalizacao").value.trim() : "",
+        operatorCode:            modalCoverageData && modalCoverageData.operator ? modalCoverageData.operator.code : "",
+        planCode:                $("mPlano").value,
+        planos:                  PLAN_LABELS[$("mPlano").value] ? PLAN_LABELS[$("mPlano").value].split(" — ")[0] : $("mPlano").value,
         diaVencimentoFatura:     $("mVencimento").value,
         dataInstalacao1:         $("mDataInstalacao").value,
         turnoInstalacao1:        $("mTurnoInstalacao").value,
-        linkLocalizacao:         modalCoverageData && modalCoverageData.coords ? `https://www.google.com/maps?q=${modalCoverageData.coords}` : "",
+        linkLocalizacao:         $("mLinkLocalizacaoFixa") && $("mLinkLocalizacaoFixa").value ? $("mLinkLocalizacaoFixa").value : (modalCoverageData && modalCoverageData.coords ? `https://www.google.com/maps?q=${modalCoverageData.coords}` : ""),
         urlAdicional:            "",
-        obsEndereco:             modalCoverageData && modalCoverageData.motivo ? `Cobertura validada pelo site. Motivo: ${modalCoverageData.motivo}` : "Cobertura validada pelo site.",
+        obsEndereco:             `${modalCoverageData && modalCoverageData.motivo ? `Cobertura validada pelo site. Motivo: ${modalCoverageData.motivo}` : "Cobertura validada pelo site."}${$("mCoordenadasFixas") && $("mCoordenadasFixas").value ? ` Localização fixa enviada pelo cliente: ${$("mCoordenadasFixas").value}. Endereço detectado: ${$("mEnderecoDetectadoLocalizacao").value || "-"}.` : ""}`,
 
         page_url:                window.location.href,
         landing_page:            lerOrigemTrafego().landing_page || window.location.href,
@@ -3244,13 +5987,42 @@
       const intervalo = setInterval(() => {
         segundos--;
         if (contador) contador.textContent = segundos;
-        if (segundos <= 0) { clearInterval(intervalo); window.location.href = url; }
+        if (segundos <= 0) {
+          clearInterval(intervalo);
+          trackGoogleAdsWhatsAppConversion();
+          trackGA4("clique_whatsapp", {
+            origem_botao: "pos_envio_formulario_easy",
+            plano: $("mPlano") ? $("mPlano").value : "",
+            cidade: $("mCidade") ? $("mCidade").value.trim() : "",
+            uf: $("mUf") ? $("mUf").value.trim().toUpperCase() : ""
+          });
+          window.location.href = url;
+        }
       }, 1000);
+    }
+
+
+    function dispararConversaoLeadGoogleAds() {
+      if (window.googleAdsLeadConversionSent) return;
+      window.googleAdsLeadConversionSent = true;
+
+      if (typeof gtag === "function") {
+        gtag("event", "conversion", {
+          send_to: "AW-17075496858/zJmpCO2zoM8bEJrPnc4_",
+          value: 1.0,
+          currency: "BRL"
+        });
+      }
     }
 
     async function enviarFormulario() {
       const erroEl = $("modalErro");
       erroEl.classList.remove("show");
+      trackGA4("tentou_enviar_formulario_easy", {
+        plano: $("mPlano") ? $("mPlano").value : "",
+        cidade: $("mCidade") ? $("mCidade").value.trim() : "",
+        uf: $("mUf") ? $("mUf").value.trim().toUpperCase() : ""
+      });
       if (!modalCoverageValidated) {
         erroEl.textContent = "Volte para a etapa de endereço e valide a cobertura antes de enviar.";
         erroEl.classList.add("show");
@@ -3259,43 +6031,74 @@
       const btn = $("btnSubmit");
       const original = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<div class="spinner"></div> Enviando...';
+      showGlobalLoading("Estamos enviando sua solicitação. Aguarde a confirmação na tela antes de sair.", "Finalizando sua solicitação...");
       try {
-        const response = await fetch(CLOUD_RUN_URL, {
+        const response = await fetch(SITE_PRE_SALE_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(buildModalPayload())
         });
         const data = await response.json().catch(() => ({}));
         if (response.ok && data.ok) {
+          const planoSelecionadoEvento = $("mPlano").value;
+          trackGA4("enviou_formulario_easy", {
+            plano: planoSelecionadoEvento,
+            valor: PLAN_VALUES[planoSelecionadoEvento] || 0,
+            cidade: $("mCidade").value.trim(),
+            uf: $("mUf").value.trim().toUpperCase(),
+            easy_ok: data.easyOk === true ? "sim" : "nao"
+          });
           mostrarEtapa(6);
-          if (data.easyOk === true && vendaVeioDoGoogleSite() && typeof gtag === "function") {
-            const planoSelecionado = $("mPlano").value;
-            const valorConversao = PLAN_VALUES[planoSelecionado] || 1.0;
-            gtag("event", "conversion", {
-              send_to: "AW-17075496858/mdbTCLiuxcsaEJrPnc4_",
-              value: valorConversao,
-              currency: "BRL"
-            });
-          }
+          dispararConversaoLeadGoogleAds();
+          hideGlobalLoading();
           redirecionarWhatsAppFinal();
         } else {
+          trackGA4("erro_envio_formulario", {
+            plano: $("mPlano").value,
+            cidade: $("mCidade").value.trim(),
+            uf: $("mUf").value.trim().toUpperCase(),
+            erro: data.message || data.motivo || "erro_envio"
+          });
           erroEl.textContent = data.message || "Erro ao enviar. Tente novamente.";
           erroEl.classList.add("show");
           btn.disabled = false;
           btn.innerHTML = original;
+          hideGlobalLoading();
         }
       } catch (err) {
+        trackGA4("erro_envio_formulario", {
+          plano: $("mPlano").value,
+          cidade: $("mCidade").value.trim(),
+          uf: $("mUf").value.trim().toUpperCase(),
+          erro: err && err.message ? err.message : "falha_conexao"
+        });
         erroEl.textContent = "Falha de conexão. Verifique o endpoint do Cloud Run ou tente novamente.";
         erroEl.classList.add("show");
         btn.disabled = false;
         btn.innerHTML = original;
+        hideGlobalLoading();
       }
+    }
+
+
+    // Remove animação de pulse quando localização for capturada
+    function removerPulseLocalizacao(prefixo) {
+      const ids = {
+        consulta: 'btnUsarLocalizacaoConsulta',
+        wt: 'btnUsarLocalizacaoWhats',
+        modal: 'btnUsarLocalizacaoModal'
+      };
+      const btn = document.getElementById(ids[prefixo]);
+      if (btn) btn.classList.remove('btn-location-pulse');
     }
 
     /* Máscaras */
     $("mCep").addEventListener("input", function() {
       this.value = formatCep(this.value);
+      if (onlyDigits(this.value).length > 0 && modalSemCepMode) {
+        modalSemCepMode = false;
+        esconderBoxLocalizacaoModal();
+      }
       resetCoverageValidation();
       if (onlyDigits(this.value).length === 8) buscarCepModal(this.value);
     });
@@ -3317,5 +6120,677 @@
     });
     if ($("mDataInstalacao")) $("mDataInstalacao").min = tomorrowISO();
   </script>
+  <!-- =========================================================
+       WEBTURBO — FASE 1 RECUPERAÇÃO DE LEADS
+       Estratégias aplicadas com ressalvas:
+       1) Sticky inferior de consulta apenas mobile
+       2) Toast de abandono do modal somente após cobertura validada
+       Observação: sem popup idle, sem prova social simulada e sem scroll/exit-intent nesta fase.
+  ========================================================== -->
+
+  <div id="wt-s1-sticky-cep" class="wt-s1-sticky-cep" aria-hidden="true">
+    <button id="wt-s1-btn" class="wt-s1-sticky-cta" type="button" aria-label="Abrir consulta de cobertura">
+      <svg class="wt-s1-sticky-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"></path>
+      </svg>
+      <div class="wt-s1-sticky-text">
+        <strong>Será que a MhNet chegou aí?</strong>
+        <span>Clique aqui e confira</span>
+      </div>
+    </button>
+  </div>
+
+  <div id="wt-s2-toast-abandono" class="wt-s2-toast-abandono" aria-hidden="true">
+    <button id="wt-s2-close" type="button" aria-label="Fechar aviso">×</button>
+    <div class="wt-s2-dot" aria-hidden="true">✓</div>
+    <div class="wt-s2-content">
+      <strong>Endereço verificado</strong>
+      <span>Seu endereço já foi verificado. Continue a contratação pelo WhatsApp.</span>
+    </div>
+    <a id="wt-s2-wa" href="#" target="_blank" rel="noopener">Continuar</a>
+  </div>
+
+  <style>
+    .wt-s1-sticky-cep {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 28px;
+      z-index: 60;
+      display: flex;
+      justify-content: center;
+      padding: 0 14px;
+      background: transparent;
+      top: auto !important;
+      transform: translateY(130%);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .24s ease, opacity .24s ease;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .wt-s1-sticky-cep.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .wt-s1-sticky-cta {
+      width: 100%;
+      max-width: 680px;
+      min-height: 64px;
+      border-radius: 999px;
+      background: var(--blue, #0a2463);
+      color: #fff;
+      box-shadow: 0 10px 28px rgba(5,15,40,.28), 0 0 0 1.5px rgba(10,36,99,.20);
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      padding: 10px 18px;
+      cursor: pointer;
+      pointer-events: auto;
+      font-family: 'Montserrat', sans-serif;
+      transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+
+    .wt-s1-sticky-cta:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+      box-shadow: 0 14px 32px rgba(5,15,40,.32), 0 0 0 1.5px rgba(10,36,99,.20);
+    }
+
+    .wt-s1-sticky-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      fill: #00c853;
+    }
+
+    .wt-s1-sticky-text {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .wt-s1-sticky-cta strong {
+      display: block;
+      font-size: 15px;
+      line-height: 1.18;
+      font-weight: 600;
+      letter-spacing: -.1px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .wt-s1-sticky-cta span {
+      display: block;
+      font-size: 13px;
+      line-height: 1.18;
+      font-weight: 400;
+      color: rgba(255,255,255,.88);
+    }
+
+    body.wt-s1-sticky-visible .floating-wa {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(10px) scale(.96);
+      transition: opacity .22s ease .3s, visibility .22s ease .3s, transform .22s ease .3s;
+    }
+
+    @media (max-width: 768px) {
+      body.wt-s1-sticky-visible .benefits-section {
+        padding-bottom: 132px;
+      }
+
+      body.wt-s1-sticky-visible .footer {
+        padding-bottom: 142px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .wt-s1-sticky-cep {
+        bottom: 26px;
+        padding-left: 14px;
+        padding-right: 14px;
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      .wt-s1-sticky-cta {
+        min-height: 64px;
+        padding: 10px 18px;
+      }
+    }
+
+    .wt-s2-toast-abandono {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 120;
+      width: min(560px, calc(100% - 28px));
+      background: var(--blue, #0a2463);
+      color: #fff;
+      border-radius: 14px;
+      box-shadow: 0 18px 46px rgba(10,36,99,.32);
+      border: 1px solid rgba(255,255,255,.12);
+      padding: 13px 14px 13px 42px;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      transform: translate(-50%, 24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform .22s ease, opacity .22s ease;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .wt-s2-toast-abandono.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #wt-s2-close {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255,255,255,.14);
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .wt-s2-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green, #00c853);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .wt-s2-content { min-width: 0; }
+    .wt-s2-content strong {
+      display: block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .wt-s2-content span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.35;
+      color: rgba(255,255,255,.84);
+    }
+
+    #wt-s2-wa {
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 8px;
+      background: var(--green, #00c853);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+
+    @media (min-width: 769px) {
+      .wt-s1-sticky-cep { display: none !important; }
+    }
+
+    @media (max-width: 430px) {
+      .wt-s2-toast-abandono {
+        bottom: 88px;
+        grid-template-columns: 24px minmax(0, 1fr);
+        padding-right: 12px;
+      }
+      #wt-s2-wa { grid-column: 1 / -1; width: 100%; }
+    }
+  
+
+    /* ─────────────────────────────────────────────
+       PREMIUM UI PATCH — seguro: apenas CSS/visual.
+       Não altera JS, IDs, formulários ou integrações.
+    ───────────────────────────────────────────── */
+
+    .topbar {
+      background: linear-gradient(90deg, #06153d 0%, #0a2463 100%) !important;
+      border-bottom: 1px solid rgba(255,255,255,.08) !important;
+    }
+
+    .hero-banner,
+    .hero-banner-card {
+      background-color: #0a2463 !important;
+    }
+
+    .hero-banner-card {
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255,255,255,.055) 0 1.5px, transparent 1.7px),
+        radial-gradient(circle at 82% 16%, rgba(255,255,255,.045) 0 1.4px, transparent 1.6px),
+        radial-gradient(circle at 70% 78%, rgba(255,255,255,.04) 0 1.5px, transparent 1.7px),
+        linear-gradient(135deg, #0a2463 0%, #1039a8 50%, #1a56db 100%) !important;
+      background-size: 28px 28px, 36px 36px, 42px 42px, cover !important;
+    }
+
+    .hero-content-fallback {
+      max-width: 980px !important;
+      margin: 0 auto !important;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary,
+    .btn-contratar-plano,
+    .btn-whats {
+      background: linear-gradient(135deg, #1a56db 0%, #0a2463 100%) !important;
+      box-shadow: 0 8px 24px rgba(26,86,219,.40) !important;
+      transition: all .2s ease !important;
+    }
+
+    .btn-primary:hover,
+    .btn-contratar-plano:hover,
+    .btn-whats:hover {
+      filter: brightness(1.12) !important;
+      transform: translateY(-2px) !important;
+      box-shadow: 0 12px 32px rgba(26,86,219,.50) !important;
+    }
+
+    .plan-tag {
+      background: rgba(26,86,219,.07) !important;
+      color: #1a56db !important;
+      border: 1px solid rgba(26,86,219,.18) !important;
+    }
+
+    .plan.featured {
+      background: #0a2463 !important;
+      border-color: rgba(255,255,255,.16) !important;
+      box-shadow: 0 24px 60px rgba(10,36,99,.35) !important;
+      color: #ffffff !important;
+    }
+
+    @media (min-width: 769px) {
+      .plan.featured { transform: scale(1.03) !important; }
+      .plan.featured:hover { transform: scale(1.03) translateY(-6px) !important; }
+    }
+
+    .plan.featured h3,
+    .plan.featured .price .value,
+    .plan.featured .price small,
+    .plan.featured ul li,
+    .plan.featured .subtitle {
+      color: #ffffff !important;
+    }
+
+    .plan.featured .subtitle,
+    .plan.featured .price small {
+      opacity: .78 !important;
+    }
+
+    .plan.featured ul li::before {
+      color: #00c853 !important;
+    }
+
+    .plan.featured .plan-tag {
+      background: rgba(255,255,255,.12) !important;
+      color: rgba(255,255,255,.92) !important;
+      border-color: rgba(255,255,255,.18) !important;
+    }
+
+    .plan.featured .plan-badge {
+      background: #00c853 !important;
+      color: #ffffff !important;
+      border-color: transparent !important;
+      font-size: 11px !important;
+      text-transform: uppercase !important;
+    }
+
+    .plan.featured .plan-badge::before {
+      content: "Mais popular";
+    }
+
+    .plan.featured .plan-badge {
+      font-size: 0 !important;
+    }
+
+    .plan.featured .plan-badge::before {
+      font-size: 11px !important;
+      line-height: 1 !important;
+      letter-spacing: .4px !important;
+    }
+
+    .plan.featured .btn-contratar-plano {
+      background: #ffffff !important;
+      color: #0a2463 !important;
+      font-weight: 800 !important;
+      box-shadow: 0 10px 24px rgba(255,255,255,.18) !important;
+    }
+
+    .plan.featured .btn-contratar-plano:hover {
+      box-shadow: 0 14px 30px rgba(255,255,255,.24) !important;
+    }
+
+    .section-eyebrow {
+      letter-spacing: 1.2px !important;
+    }
+
+    .section-eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      display: inline-block;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .benefits-section .section-eyebrow::before {
+      background: #00c853;
+    }
+
+    .consult-card {
+      border-top: 3px solid #1a56db !important;
+      box-shadow: 0 24px 64px rgba(10,36,99,.16) !important;
+    }
+
+    .plan,
+    .section-head,
+    .consult-card,
+    .coverage-trust,
+    .trust-chip {
+      animation: wtPremiumFadeUp .45s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .plans .plan:nth-child(2),
+    .coverage-trust .trust-chip:nth-child(2) { animation-delay: .08s; }
+
+    .plans .plan:nth-child(3),
+    .coverage-trust .trust-chip:nth-child(3) { animation-delay: .16s; }
+
+    @keyframes wtPremiumFadeUp {
+      from { opacity: .001; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .plan,
+      .section-head,
+      .consult-card,
+      .coverage-trust,
+      .trust-chip {
+        animation: none !important;
+      }
+    }
+</style>
+
+  <script>
+    (function wtLeadRecoveryFase1() {
+      const S1_FLAG = "wt_s1_sticky_impression";
+      const S2_FLAG = "wt_s2_toast_abandono_shown";
+      // Usa o mesmo endpoint Cloud Run já configurado no index principal.
+      // O backend deve tratar a action "notifyAbandonoModal" e disparar no Telegram.
+      const TELEGRAM_ABANDONO_ENDPOINT = CLOUD_RUN_URL;
+      let wtPopupAtivo = false;
+      let wtS1LastVisible = false;
+      let wtS2Timer = null;
+
+      function safeTrack(eventName, params = {}) {
+        if (typeof trackGA4 === "function") trackGA4(eventName, params);
+      }
+
+      function cepDigits(v) { return String(v || "").replace(/\D+/g, "").slice(0, 8); }
+      function maskCep(v) {
+        const d = cepDigits(v);
+        return d.length > 5 ? d.slice(0, 5) + "-" + d.slice(5) : d;
+      }
+
+      function modalAberto() {
+        return Boolean(document.querySelector(".modal-overlay.open, .wt-modal-overlay.open"));
+      }
+
+      function podeInterromper() {
+        return !coberturaPaginaData && !modalAberto() && !wtPopupAtivo;
+      }
+
+      function setS1Visible(visible) {
+        const bar = document.getElementById("wt-s1-sticky-cep");
+        if (!bar) return;
+
+        const show = Boolean(visible && window.innerWidth <= 768 && podeInterromper());
+        bar.classList.toggle("show", show);
+        bar.setAttribute("aria-hidden", show ? "false" : "true");
+        document.body.classList.toggle("wt-s1-sticky-visible", show);
+
+        if (show && !wtS1LastVisible) {
+          if (!sessionStorage.getItem(S1_FLAG)) {
+            sessionStorage.setItem(S1_FLAG, "1");
+            safeTrack("sticky_bar_impressao", { estrategia: "fase1_mobile" });
+          }
+        }
+        wtS1LastVisible = show;
+      }
+
+      function iniciarStickyMobile() {
+        const dobraAlvo = document.querySelector(".benefits-section");
+        const bar = document.getElementById("wt-s1-sticky-cep");
+        if (!dobraAlvo || !bar) return;
+
+        document.getElementById("wt-s1-btn")?.addEventListener("click", function() {
+          safeTrack("sticky_bar_cta_clicada", { origem_botao: "sticky_bottom_cep" });
+          if (typeof wtAbrirModal === "function") wtAbrirModal("sticky_bottom_cep");
+        });
+
+        // Regra ajustada: a sticky só aparece na dobra abaixo da consulta de cobertura
+        // (.benefits-section), evitando redundância nas dobras que já têm consulta.
+        // O contorno branco/verde destaca a barra mesmo em seção com fundo azul.
+        function avaliarDobraSticky() {
+          if (coberturaPaginaData) { setS1Visible(false); return; }
+          const topbar = document.querySelector(".topbar");
+          const topbarH = topbar ? topbar.getBoundingClientRect().height : 60;
+          const rect = dobraAlvo.getBoundingClientRect();
+          const chegouNaDobra = rect.top <= topbarH + 8;
+          setS1Visible(chegouNaDobra);
+        }
+
+        window.wtAvaliarStickyConsulta = avaliarDobraSticky;
+        window.addEventListener("scroll", avaliarDobraSticky, { passive: true });
+        window.addEventListener("resize", avaliarDobraSticky, { passive: true });
+        avaliarDobraSticky();
+      }
+
+      function montarWaAbandono() {
+        const nome = document.getElementById("mNome")?.value || "";
+        const cep = document.getElementById("mCep")?.value || "";
+        const plano = document.getElementById("mPlano")?.value || modalPlanoPreSelecionado || "";
+        const cidade = document.getElementById("mCidade")?.value || "";
+        const msg = [
+          "Olá, já verifiquei meu endereço no site da WebTurbo e quero continuar minha contratação.",
+          nome ? `Nome: ${nome}` : "",
+          plano ? `Plano: ${plano}` : "",
+          cep ? `CEP: ${cep}` : "",
+          cidade ? `Cidade: ${cidade}` : ""
+        ].filter(Boolean).join("\n");
+        return `https://wa.me/${WHATS_NUMBER}?text=${encodeURIComponent(msg)}`;
+      }
+
+      function coletarDadosAbandono(etapa) {
+        const get = (id) => document.getElementById(id)?.value?.trim() || "";
+        const cobertura = modalCoverageData || (coberturaPaginaData && coberturaPaginaData.cobertura) || {};
+        return {
+          evento: "abandono_modal_com_cobertura",
+          etapa_abandono: etapa || "",
+          origem: "site_webturbo_modal_contratacao",
+          horario_site: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }),
+          nome: get("mNome"),
+          cpf: get("mCpf"),
+          nascimento: get("mNascimento"),
+          email: get("mEmail"),
+          telefone1: get("mTelefone1"),
+          telefone2: get("mTelefone2"),
+          plano: get("mPlano") || modalPlanoPreSelecionado || "",
+          cep: get("mCep"),
+          numero: get("mNumero"),
+          logradouro: get("mLogradouro"),
+          bairro: get("mBairro"),
+          cidade: get("mCidade"),
+          uf: get("mUf"),
+          complemento: get("mComplemento"),
+          ponto_referencia: get("mPontoRef"),
+          vencimento: get("mVencimento"),
+          data_instalacao: get("mDataInstalacao"),
+          turno_instalacao: get("mTurnoInstalacao"),
+          cobertura_validada: modalCoverageValidated === true,
+          cobertura_motivo: cobertura && cobertura.motivo ? cobertura.motivo : "",
+          cobertura_coords: cobertura && cobertura.coords ? cobertura.coords : "",
+          url_pagina: location.href,
+          user_agent: navigator.userAgent
+        };
+      }
+
+      async function dispararTelegramAbandono(etapa) {
+        if (!TELEGRAM_ABANDONO_ENDPOINT) {
+          console.warn("Endpoint do Telegram de abandono não encontrado.");
+          return;
+        }
+
+        const payload = {
+          action: "notifyAbandonoModal",
+          ...coletarDadosAbandono(etapa)
+        };
+
+        try {
+          await fetch(TELEGRAM_ABANDONO_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            keepalive: true
+          });
+          safeTrack("telegram_abandono_modal_enviado", {
+            etapa_abandono: etapa || "",
+            plano: payload.plano || "",
+            cidade: payload.cidade || ""
+          });
+        } catch (err) {
+          safeTrack("telegram_abandono_modal_erro", {
+            etapa_abandono: etapa || "",
+            erro: err && err.message ? err.message : "erro_fetch"
+          });
+        }
+      }
+
+      function esconderToastAbandono(manual = false) {
+        const toast = document.getElementById("wt-s2-toast-abandono");
+        if (!toast) return;
+        toast.classList.remove("show");
+        toast.setAttribute("aria-hidden", "true");
+        wtPopupAtivo = false;
+        clearTimeout(wtS2Timer);
+        if (manual) safeTrack("toast_abandono_fechou");
+      }
+
+      function mostrarToastAbandono(etapa) {
+        if (sessionStorage.getItem(S2_FLAG)) return;
+        if (wtPopupAtivo) return;
+
+        const toast = document.getElementById("wt-s2-toast-abandono");
+        const wa = document.getElementById("wt-s2-wa");
+        if (!toast || !wa) return;
+
+        const plano = document.getElementById("mPlano")?.value || modalPlanoPreSelecionado || "";
+        const cidade = document.getElementById("mCidade")?.value || "";
+
+        sessionStorage.setItem(S2_FLAG, "1");
+        wa.href = montarWaAbandono();
+        toast.classList.add("show");
+        toast.setAttribute("aria-hidden", "false");
+        wtPopupAtivo = true;
+
+        safeTrack("toast_abandono_exibido", { etapa_abandono: etapa || "", plano, cidade });
+        // Dispara Telegram no momento em que o toast aparece.
+        // Assim o lead pode ser recuperado depois mesmo que não clique no WhatsApp.
+        dispararTelegramAbandono(etapa);
+
+        wtS2Timer = setTimeout(() => esconderToastAbandono(false), 30000);
+      }
+
+      function patchFecharModal() {
+        if (typeof window.fecharModal !== "function") return;
+        const originalFecharModal = window.fecharModal;
+
+        window.fecharModal = function fecharModalPatchWebTurbo() {
+          const overlay = document.getElementById("modalOverlay");
+          const modalEstaAberto = overlay && overlay.classList.contains("open");
+          const etapaAtiva = ["etapa1", "etapa2", "etapa3", "etapa4", "etapa5", "etapaSucesso"]
+            .find((id) => {
+              const el = document.getElementById(id);
+              return el && el.style.display !== "none";
+            });
+
+          originalFecharModal.apply(this, arguments);
+
+          if (
+            modalEstaAberto &&
+            ["etapa3", "etapa4", "etapa5"].includes(etapaAtiva) &&
+            modalCoverageValidated === true
+          ) {
+            setTimeout(() => mostrarToastAbandono(etapaAtiva), 120);
+          }
+        };
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+        iniciarStickyMobile();
+        patchFecharModal();
+
+        document.getElementById("wt-s2-close")?.addEventListener("click", () => esconderToastAbandono(true));
+        document.getElementById("wt-s2-wa")?.addEventListener("click", function() {
+          trackGoogleAdsWhatsAppConversion();
+          safeTrack("toast_abandono_clicou_whatsapp");
+          esconderToastAbandono(false);
+        });
+
+        document.addEventListener("keydown", function(e) {
+          if (e.key === "Escape") esconderToastAbandono(true);
+        });
+      });
+
+      (function() {
+        var track = document.getElementById('plansTrack');
+        var hint = document.querySelector('.plans-scroll-hint');
+        if (!track || !hint) return;
+
+        function checkScroll() {
+          var atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 8;
+          hint.classList.toggle('hidden', atEnd);
+        }
+
+        track.addEventListener('scroll', checkScroll, { passive: true });
+        window.addEventListener('resize', checkScroll);
+        checkScroll();
+      })();
+    })();
+  </script>
+
+
 </body>
 </html>
