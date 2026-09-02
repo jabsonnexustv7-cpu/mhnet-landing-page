@@ -1,0 +1,37 @@
+name: Aplicar suporte a CEP geral TIM no site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/aplicar-cep-geral-site.yml"
+      - "scripts/apply-general-cep-site.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  aplicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar repositório
+        uses: actions/checkout@v4
+
+      - name: Aplicar patch de CEP geral
+        run: node scripts/apply-general-cep-site.mjs
+
+      - name: Validar diff
+        run: git diff --check
+
+      - name: Commitar páginas atualizadas
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "Nenhuma alteração pendente."
+            exit 0
+          fi
+          git add -- '**/index.html' index.html
+          git commit -m "fix: tratar CEP geral TIM no site [skip ci]"
+          git push
