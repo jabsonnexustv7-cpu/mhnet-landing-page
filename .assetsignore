@@ -1,0 +1,8 @@
+/.git
+/.github/**
+/.wrangler/**
+/tests/**
+/.gitignore
+/wrangler.jsonc
+/README.md
+/relatorio-geracao.json
